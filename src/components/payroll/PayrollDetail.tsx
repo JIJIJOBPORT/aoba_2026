@@ -97,7 +97,7 @@ export default function PayrollDetail({ employee, record, companyName = 'あお�
       </div>
 
       {/* 印刷対象エリア */}
-      <div id="payroll-print-area" style={{ padding: 24, backgroundColor: 'white', fontFamily: '"Hiragino Sans", "Meiryo", Arial, sans-serif', minWidth: 640 }}>
+      <div id="payroll-print-area" style={{ padding: 24, backgroundColor: 'white', fontFamily: '"Noto Sans JP", "Hiragino Sans", "Yu Gothic", sans-serif', minWidth: 640 }}>
 
         {/* タイトル行 */}
         <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 12 }}>
