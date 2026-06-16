@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Employee } from '@/types';
-import { Save, CheckCircle, Clock } from 'lucide-react';
+import { Save } from 'lucide-react';
 
 const MONTHS = ['06','07','08','09','10','11','12','01','02','03','04','05'];
 const MONTH_LABELS: Record<string, string> = {
@@ -84,13 +84,12 @@ export default function ResidentTaxPage() {
     }
   };
 
-  const handleStatusToggle = async (rec: ResidentTaxRecord) => {
-    const newStatus = rec.status === '未払' ? '支払済' : '未払';
-    const paidDate = newStatus === '支払済' ? new Date().toISOString().slice(0, 10) : '';
+  const handlePaidDateChange = async (rec: ResidentTaxRecord, date: string) => {
+    const newStatus = date ? '支払済' : '未払';
     await fetch('/api/resident-tax', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ employeeId: rec.employeeId, yearMonth: rec.yearMonth, status: newStatus, paidDate }),
+      body: JSON.stringify({ employeeId: rec.employeeId, yearMonth: rec.yearMonth, status: newStatus, paidDate: date }),
     });
     const res = await fetch(`/api/resident-tax?employeeId=${selectedId}`);
     const d = await res.json();
@@ -193,7 +192,7 @@ export default function ResidentTaxPage() {
                   <th className="text-left px-4 py-2">年月</th>
                   <th className="text-right px-3 py-2">金額</th>
                   <th className="text-center px-3 py-2">状況</th>
-                  <th className="text-center px-4 py-2">切替</th>
+                  <th className="text-left px-4 py-2">支払日</th>
                 </tr>
               </thead>
               <tbody>
@@ -203,22 +202,18 @@ export default function ResidentTaxPage() {
                     <td className="px-3 py-2 text-right text-gray-600">{rec.amount.toLocaleString()}円</td>
                     <td className="px-3 py-2 text-center">
                       {rec.status === '支払済' ? (
-                        <span className="flex items-center justify-center gap-1 text-xs text-green-700 bg-green-50 rounded-full px-2 py-0.5">
-                          <CheckCircle size={11} />支払済
-                        </span>
+                        <span className="text-xs text-green-700 bg-green-50 rounded-full px-2 py-0.5">支払済</span>
                       ) : (
-                        <span className="flex items-center justify-center gap-1 text-xs text-orange-600 bg-orange-50 rounded-full px-2 py-0.5">
-                          <Clock size={11} />未払
-                        </span>
+                        <span className="text-xs text-orange-600 bg-orange-50 rounded-full px-2 py-0.5">未払</span>
                       )}
                     </td>
-                    <td className="px-4 py-2 text-center">
-                      <button
-                        onClick={() => handleStatusToggle(rec)}
-                        className="text-xs px-2 py-1 rounded border border-gray-300 hover:bg-gray-100 transition-colors"
-                      >
-                        切替
-                      </button>
+                    <td className="px-4 py-2">
+                      <input
+                        type="date"
+                        defaultValue={rec.paidDate ?? ''}
+                        onBlur={e => handlePaidDateChange(rec, e.target.value)}
+                        className="border border-gray-300 rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-[#86AC41]"
+                      />
                     </td>
                   </tr>
                 ))}
