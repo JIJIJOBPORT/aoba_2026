@@ -32,7 +32,11 @@ export default function PayrollDetail({ employee, record, companyName = 'あお�
       formData.append('file', blob, filename);
       formData.append('filename', filename);
       formData.append('employeeName', employee.name);
-      await fetch('/api/pdf', { method: 'POST', body: formData });
+      const driveRes = await fetch('/api/pdf', { method: 'POST', body: formData });
+      const driveData = await driveRes.json();
+      if (!driveData.success) {
+        setExportError(`Drive保存エラー: ${driveData.error}`);
+      }
     } catch (err) {
       setExportError(err instanceof Error ? err.message : String(err));
     } finally {
