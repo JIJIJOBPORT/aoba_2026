@@ -132,11 +132,11 @@ export default function PayrollDetail({ employee, record, companyName = 'あお�
             </tr>
             <tr>
               <td style={td}>{fmtN(record.workDays)}</td>
-              <td style={td}></td>
+              <td style={td}>0</td>
               <td style={td}>{fmtN(record.absentDays)}</td>
-              <td style={td}></td>
+              <td style={td}>0</td>
               <td style={td}>{fmtN(record.paidLeaveDays)}</td>
-              <td style={td}></td>
+              <td style={td}>0</td>
             </tr>
             <tr>
               <td style={th}>勤務時間</td>
@@ -149,10 +149,10 @@ export default function PayrollDetail({ employee, record, companyName = 'あお�
             <tr>
               <td style={td}>{fmtN(record.workHours)}</td>
               <td style={td}>{fmtN(record.overtimeHours)}</td>
-              <td style={td}></td>
-              <td style={td}></td>
-              <td style={td}></td>
-              <td style={td}></td>
+              <td style={td}>0</td>
+              <td style={td}>0</td>
+              <td style={td}>0</td>
+              <td style={td}>0</td>
             </tr>
 
             {/* 支給ヘッダー */}
@@ -170,8 +170,8 @@ export default function PayrollDetail({ employee, record, companyName = 'あお�
               <td style={td}>{fmt(record.positionAllowance)}</td>
               <td style={td}>{fmt(record.familyAllowance)}</td>
               <td style={td}>{fmt(record.housingAllowance)}</td>
-              <td style={td}></td>
-              <td style={td}></td>
+              <td style={td}>0</td>
+              <td style={td}>0</td>
             </tr>
             <tr>
               <td style={th}>時間外手当</td>
@@ -206,7 +206,7 @@ export default function PayrollDetail({ employee, record, companyName = 'あお�
               <td style={td}>{fmt(record.employmentInsurance)}</td>
               <td style={td}>{fmt(socialTotal)}</td>
               <td style={td}>{fmt(taxableBase - socialTotal)}</td>
-              <td style={td}></td>
+              <td style={td}>0</td>
             </tr>
             <tr>
               <td style={th}>所得税</td>
@@ -219,8 +219,8 @@ export default function PayrollDetail({ employee, record, companyName = 'あお�
             <tr>
               <td style={td}>{fmt(record.incomeTax)}</td>
               <td style={td}>{fmt(record.residentTax)}</td>
-              <td style={td}></td>
-              <td style={td}></td>
+              <td style={td}>0</td>
+              <td style={td}>0</td>
               <td style={{ ...td, fontWeight: 'bold', color: '#b85c58' }}>{record.totalDeductions.toLocaleString()}</td>
               <td style={{ ...td, fontWeight: 'bold', fontSize: 14, backgroundColor: GL, color: G }}>{record.netPay.toLocaleString()}</td>
             </tr>
