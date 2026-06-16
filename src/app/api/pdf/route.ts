@@ -52,6 +52,15 @@ export async function POST(request: Request) {
       ? await getOrCreateEmployeeFolder(drive, employeeName)
       : ROOT_FOLDER_ID;
 
+    // 同名ファイルが既に存在する場合は削除（常に最新版のみ保持）
+    const existing = await drive.files.list({
+      q: `name='${filename}' and '${folderId}' in parents and trashed=false`,
+      fields: 'files(id)',
+    });
+    for (const f of existing.data.files ?? []) {
+      await drive.files.delete({ fileId: f.id! });
+    }
+
     const res = await drive.files.create({
       requestBody: {
         name: filename,
