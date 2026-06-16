@@ -77,11 +77,10 @@ function PayrollEntryInner() {
   const selectedEmployee = employees.find((e) => e.id === form.employeeId);
 
   // 住民税を自動取得（社員または勤務月が変わったとき）
+  // 住民税は勤務月と同月分を控除（例: 5月勤務→2026-05の住民税）
   useEffect(() => {
     if (!form.employeeId || !form.paymentMonth) return;
-    const [y, m] = form.paymentMonth.split('-').map(Number);
-    const paymentYearMonth = m === 12 ? `${y + 1}-01` : `${y}-${String(m + 1).padStart(2, '0')}`;
-    fetch(`/api/resident-tax?employeeId=${form.employeeId}&yearMonth=${paymentYearMonth}`)
+    fetch(`/api/resident-tax?employeeId=${form.employeeId}&yearMonth=${form.paymentMonth}`)
       .then((r) => r.json())
       .then((d) => {
         if (d.success && d.data.length > 0) {
