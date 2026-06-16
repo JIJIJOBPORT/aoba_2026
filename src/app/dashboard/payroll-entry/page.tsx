@@ -59,22 +59,28 @@ export default function PayrollEntryPage() {
 
   const selectedEmployee = employees.find((e) => e.id === form.employeeId);
 
-  // 勤務月が変わったら支払日を翌月25日に自動セット＋住民税を自動取得
-  const handleWorkMonthChange = async (yearMonth: string) => {
+  // 住民税を自動取得（社員または勤務月が変わったとき）
+  useEffect(() => {
+    if (!form.employeeId || !form.paymentMonth) return;
+    const [y, m] = form.paymentMonth.split('-').map(Number);
+    const paymentYearMonth = m === 12 ? `${y + 1}-01` : `${y}-${String(m + 1).padStart(2, '0')}`;
+    fetch(`/api/resident-tax?employeeId=${form.employeeId}&yearMonth=${paymentYearMonth}`)
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.success && d.data.length > 0) {
+          setForm((f) => ({ ...f, residentTax: d.data[0].amount }));
+        }
+      });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.employeeId, form.paymentMonth]);
+
+  // 勤務月が変わったら支払日を翌月25日に自動セット
+  const handleWorkMonthChange = (yearMonth: string) => {
     const [y, m] = yearMonth.split('-').map(Number);
     const nextMonth = m === 12 ? `${y + 1}-01` : `${y}-${String(m + 1).padStart(2, '0')}`;
     const paymentDate = `${nextMonth}-25`;
     setForm((f) => ({ ...f, paymentMonth: yearMonth, paymentDate }));
     setCalculated(null);
-
-    // 住民税マスタから自動取得（支払月で検索）
-    if (form.employeeId) {
-      const res = await fetch(`/api/resident-tax?employeeId=${form.employeeId}&yearMonth=${nextMonth}`);
-      const d = await res.json();
-      if (d.success && d.data.length > 0) {
-        setForm((f) => ({ ...f, paymentMonth: yearMonth, paymentDate, residentTax: d.data[0].amount }));
-      }
-    }
   };
 
   // 前月コピー
@@ -129,7 +135,14 @@ export default function PayrollEntryPage() {
   }, [form, selectedEmployee]);
 
   const handleSave = async () => {
-    if (!calculated || !selectedEmployee) return;
+    if (!selectedEmployee) {
+      setMessage({ type: 'error', text: '社員を選択してください' });
+      return;
+    }
+    if (!calculated) {
+      setMessage({ type: 'error', text: '先に「自動計算」を実行してください' });
+      return;
+    }
     setSaving(true);
     setMessage(null);
 
@@ -409,7 +422,7 @@ export default function PayrollEntryPage() {
             </button>
             <button
               onClick={handleSave}
-              disabled={!calculated || saving}
+              disabled={saving}
               className="flex items-center gap-1.5 px-4 py-2 bg-[#86AC41] text-white text-sm rounded-lg hover:bg-[#6d9235] disabled:opacity-50 transition-colors"
             >
               <Save size={14} />

@@ -17,7 +17,7 @@ export async function GET(request: Request) {
 
   try {
     const rows = await getSheetRows(SHEETS.PAYROLL);
-    const row = rows.find((r) => r[0] === employeeId && r[1] === prevMonth);
+    const row = rows.find((r) => r[1] === employeeId && r[2] === prevMonth);
     if (!row) {
       return NextResponse.json({ success: false, error: `${prevMonth} のデータが見つかりません` });
     }
@@ -25,13 +25,13 @@ export async function GET(request: Request) {
     return NextResponse.json({
       success: true,
       data: {
-        basicSalary: parseNumber(row[8]),
-        positionAllowance: parseNumber(row[9]),
-        familyAllowance: parseNumber(row[10]),
-        housingAllowance: parseNumber(row[11]),
-        allowances: parseNumber(row[12]),
-        overtimePay: parseNumber(row[13]),
-        transportAllowance: parseNumber(row[14]),
+        basicSalary: parseNumber(row[10]),
+        positionAllowance: parseNumber(row[11]),
+        familyAllowance: parseNumber(row[12]),
+        housingAllowance: parseNumber(row[13]),
+        allowances: parseNumber(row[14]),
+        overtimePay: parseNumber(row[15]),
+        transportAllowance: parseNumber(row[16]),
       },
     });
   } catch (err) {
