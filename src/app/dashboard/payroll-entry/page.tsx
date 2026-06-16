@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Employee, PayrollRecord } from '@/types';
 import { Calculator, Save, Upload, Copy } from 'lucide-react';
@@ -30,6 +30,14 @@ const emptyForm = {
 };
 
 export default function PayrollEntryPage() {
+  return (
+    <Suspense fallback={<div className="p-6 text-gray-400 text-sm">読み込み中...</div>}>
+      <PayrollEntryInner />
+    </Suspense>
+  );
+}
+
+function PayrollEntryInner() {
   const searchParams = useSearchParams();
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [form, setForm] = useState(emptyForm);
