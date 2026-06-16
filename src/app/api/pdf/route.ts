@@ -76,7 +76,11 @@ export async function POST(request: Request) {
       includeItemsFromAllDrives: true,
     });
     for (const f of existing.data.files ?? []) {
-      await drive.files.delete({ fileId: f.id!, supportsAllDrives: true });
+      try {
+        await drive.files.delete({ fileId: f.id!, supportsAllDrives: true });
+      } catch {
+        // 削除失敗は無視して新規作成を続行
+      }
     }
 
     const res = await drive.files.create({
