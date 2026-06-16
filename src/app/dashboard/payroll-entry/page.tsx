@@ -470,7 +470,7 @@ function PayrollEntryInner() {
               </div>
 
               <div className="border-t border-gray-100 pt-3 space-y-1 mb-3">
-                <p className="text-xs font-semibold text-red-500 mb-1">控除</p>
+                <p className="text-xs font-semibold text-[#b85c58] mb-1">控除</p>
                 <SummaryRow label="健康保険料" value={calculated.healthInsurance} />
                 <SummaryRow label="厚生年金保険料" value={calculated.pensionInsurance} />
                 <SummaryRow label="雇用保険料" value={calculated.employmentInsurance} />
@@ -483,7 +483,7 @@ function PayrollEntryInner() {
                 <SummaryRow label="所得税" value={calculated.incomeTax} />
                 <SummaryRow label="住民税" value={form.residentTax} />
                 <div className="border-t border-gray-100 pt-1">
-                  <SummaryRow label="控除合計" value={calculated.totalDeductions} className="text-red-600 font-semibold" />
+                  <SummaryRow label="控除合計" value={calculated.totalDeductions} className="text-[#b85c58] font-semibold" />
                 </div>
               </div>
 

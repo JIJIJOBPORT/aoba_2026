@@ -64,7 +64,7 @@ export default function PayrollTable({ records, selectedId, onSelect, onAddClick
                   <td className="py-2.5 pr-4 text-right text-gray-600">
                     {rec.allowances.toLocaleString()}
                   </td>
-                  <td className="py-2.5 pr-4 text-right text-red-500">
+                  <td className="py-2.5 pr-4 text-right text-[#b85c58]">
                     {rec.totalDeductions.toLocaleString()}
                   </td>
                   <td className="py-2.5 pr-4 text-right font-semibold text-gray-800">

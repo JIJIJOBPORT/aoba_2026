@@ -220,7 +220,7 @@ export default function PayrollDetail({ employee, record, companyName = 'あお�
               <td style={td}>{fmt(record.residentTax)}</td>
               <td style={td}></td>
               <td style={td}></td>
-              <td style={{ ...td, fontWeight: 'bold', color: G }}>{record.totalDeductions.toLocaleString()}</td>
+              <td style={{ ...td, fontWeight: 'bold', color: '#b85c58' }}>{record.totalDeductions.toLocaleString()}</td>
               <td style={{ ...td, fontWeight: 'bold', fontSize: 14, backgroundColor: GL, color: G }}>{record.netPay.toLocaleString()}</td>
             </tr>
 

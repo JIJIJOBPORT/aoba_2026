@@ -146,7 +146,7 @@ export default function PayrollListPage() {
                   </td>
                   <td className="px-3 py-3 text-right text-gray-600">{rec.basicSalary.toLocaleString()}</td>
                   <td className="px-3 py-3 text-right text-gray-600">{rec.grossPay.toLocaleString()}</td>
-                  <td className="px-3 py-3 text-right text-red-500">{rec.totalDeductions.toLocaleString()}</td>
+                  <td className="px-3 py-3 text-right text-[#b85c58]">{rec.totalDeductions.toLocaleString()}</td>
                   <td className="px-4 py-3 text-right font-bold text-gray-800">{rec.netPay.toLocaleString()}</td>
                   <td className="px-3 py-3 text-center">
                     <button
@@ -179,7 +179,7 @@ export default function PayrollListPage() {
                 <td className="px-3 py-2 text-right text-gray-700">
                   {filtered.reduce((s, r) => s + r.grossPay, 0).toLocaleString()}
                 </td>
-                <td className="px-3 py-2 text-right text-red-500">
+                <td className="px-3 py-2 text-right text-[#b85c58]">
                   {filtered.reduce((s, r) => s + r.totalDeductions, 0).toLocaleString()}
                 </td>
                 <td className="px-4 py-2 text-right text-[#34675C]">
