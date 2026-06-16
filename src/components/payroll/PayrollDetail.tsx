@@ -93,19 +93,19 @@ export default function PayrollDetail({ employee, record, companyName = 'あお�
         <SlipTable label="支給額" color={GREEN} colorLight={GREEN_LIGHT}>
           <SlipRow>
             <SlipCell label="基本給" value={fmt(record.basicSalary)} />
-            <SlipCell label="時間外労働手当" value={fmt(record.overtimePay)} />
             <SlipCell label="役職手当" value={fmt(record.positionAllowance)} />
             <SlipCell label="家族手当" value={fmt(record.familyAllowance)} />
             <SlipCell label="住宅手当" value={fmt(record.housingAllowance)} />
-            <SlipCell label="通勤手当" value={fmt(record.transportAllowance)} />
+            <SlipCell label="時間外手当" value={fmt(record.overtimePay)} />
+            <SlipCell label="総支給額" value={record.grossPay.toLocaleString()} highlight color={GREEN} />
           </SlipRow>
           <SlipRow>
+            <SlipCell label="通勤手当" value={fmt(record.transportAllowance)} />
             <SlipCell label="その他手当" value={fmt(record.allowances)} />
             <SlipCell label="" value="" />
             <SlipCell label="" value="" />
             <SlipCell label="" value="" />
             <SlipCell label="" value="" />
-            <SlipCell label="総支給額" value={record.grossPay.toLocaleString()} highlight color={GREEN} />
           </SlipRow>
         </SlipTable>
 
