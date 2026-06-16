@@ -14,20 +14,20 @@ export async function generatePayrollPdf(elementId: string): Promise<Blob> {
   });
 
   const imgData = canvas.toDataURL('image/png');
+  // A5横（210mm × 148mm）
   const pdf = new jsPDF({
-    orientation: 'portrait',
+    orientation: 'landscape',
     unit: 'mm',
-    format: 'a4',
+    format: 'a5',
   });
 
-  const pageWidth = pdf.internal.pageSize.getWidth();
-  const pageHeight = pdf.internal.pageSize.getHeight();
-  const imgWidth = pageWidth - 20;
+  const pageWidth = pdf.internal.pageSize.getWidth();   // 210mm
+  const pageHeight = pdf.internal.pageSize.getHeight(); // 148mm
+  const margin = 8;
+  const imgWidth = pageWidth - margin * 2;
   const imgHeight = (canvas.height * imgWidth) / canvas.width;
-  const x = 10;
-  const y = 10;
 
-  pdf.addImage(imgData, 'PNG', x, y, imgWidth, Math.min(imgHeight, pageHeight - 20));
+  pdf.addImage(imgData, 'PNG', margin, margin, imgWidth, Math.min(imgHeight, pageHeight - margin * 2));
 
   return pdf.output('blob');
 }
