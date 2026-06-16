@@ -191,7 +191,7 @@ function SlipTable({ label, color, colorLight, children }: {
 
 function SlipRow({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex divide-x border-b last:border-b-0" style={{ borderColor: '#c8dfc8', divideColor: '#c8dfc8' }}>
+    <div className="flex divide-x divide-green-200 border-b border-green-200 last:border-b-0">
       {children}
     </div>
   );
