@@ -48,6 +48,7 @@ export default function PayrollDetail({ employee, record, companyName = 'あお�
     record.employmentInsurance + record.longCareInsurance + record.childcareSupport;
   const taxableBase = record.grossPay - record.transportAllowance;
   const fmt = (n: number) => n > 0 ? n.toLocaleString() : '';
+  const fmtN = (n: number) => n.toLocaleString(); // 0も表示（勤怠欄用）
 
   const td: React.CSSProperties = {
     border: `1px solid ${BD}`,
@@ -129,11 +130,11 @@ export default function PayrollDetail({ employee, record, companyName = 'あお�
               <td style={th}></td>
             </tr>
             <tr>
-              <td style={td}>{fmt(record.workDays)}</td>
+              <td style={td}>{fmtN(record.workDays)}</td>
               <td style={td}></td>
-              <td style={td}>{fmt(record.absentDays)}</td>
+              <td style={td}>{fmtN(record.absentDays)}</td>
               <td style={td}></td>
-              <td style={td}>{fmt(record.paidLeaveDays)}</td>
+              <td style={td}>{fmtN(record.paidLeaveDays)}</td>
               <td style={td}></td>
             </tr>
             <tr>
@@ -145,8 +146,8 @@ export default function PayrollDetail({ employee, record, companyName = 'あお�
               <td style={th}></td>
             </tr>
             <tr>
-              <td style={td}>{fmt(record.workHours)}</td>
-              <td style={td}>{fmt(record.overtimeHours)}</td>
+              <td style={td}>{fmtN(record.workHours)}</td>
+              <td style={td}>{fmtN(record.overtimeHours)}</td>
               <td style={td}></td>
               <td style={td}></td>
               <td style={td}></td>
