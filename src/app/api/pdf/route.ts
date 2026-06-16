@@ -10,6 +10,8 @@ async function getOrCreateEmployeeFolder(drive: ReturnType<typeof getDriveClient
   const search = await drive.files.list({
     q: `name='${employeeName}' and mimeType='application/vnd.google-apps.folder' and '${ROOT_FOLDER_ID}' in parents and trashed=false`,
     fields: 'files(id, name)',
+    supportsAllDrives: true,
+    includeItemsFromAllDrives: true,
   });
 
   if (search.data.files && search.data.files.length > 0) {
@@ -23,6 +25,7 @@ async function getOrCreateEmployeeFolder(drive: ReturnType<typeof getDriveClient
       mimeType: 'application/vnd.google-apps.folder',
       parents: [ROOT_FOLDER_ID!],
     },
+    supportsAllDrives: true,
   });
 
   return folder.data.id!;
@@ -48,7 +51,7 @@ export async function POST(request: Request) {
 
     // ルートフォルダへのアクセス確認
     try {
-      await drive.files.get({ fileId: ROOT_FOLDER_ID!, fields: 'id' });
+      await drive.files.get({ fileId: ROOT_FOLDER_ID!, fields: 'id', supportsAllDrives: true });
     } catch {
       return NextResponse.json({
         success: false,
@@ -67,9 +70,11 @@ export async function POST(request: Request) {
     const existing = await drive.files.list({
       q: `name='${filename}' and '${folderId}' in parents and trashed=false`,
       fields: 'files(id)',
+      supportsAllDrives: true,
+      includeItemsFromAllDrives: true,
     });
     for (const f of existing.data.files ?? []) {
-      await drive.files.delete({ fileId: f.id! });
+      await drive.files.delete({ fileId: f.id!, supportsAllDrives: true });
     }
 
     const res = await drive.files.create({
@@ -82,6 +87,7 @@ export async function POST(request: Request) {
         mimeType: 'application/pdf',
         body: stream,
       },
+      supportsAllDrives: true,
     });
 
     return NextResponse.json({ success: true, driveId: res.data.id });
