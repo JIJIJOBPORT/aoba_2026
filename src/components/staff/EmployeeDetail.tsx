@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Employee, PayrollRecord } from '@/types';
 import { Pencil, Mail, Phone, Building2, Calendar, X } from 'lucide-react';
 import PayrollTable from '@/components/payroll/PayrollTable';
@@ -14,6 +15,7 @@ const TABS = ['基本情報', '給与情報', '振込口座', '勤怠情報', '�
 type Tab = typeof TABS[number];
 
 export default function EmployeeDetail({ employee }: Props) {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<Tab>('給与情報');
   const [payrolls, setPayrolls] = useState<PayrollRecord[]>([]);
   const [selectedPayroll, setSelectedPayroll] = useState<PayrollRecord | null>(null);
@@ -98,7 +100,7 @@ export default function EmployeeDetail({ employee }: Props) {
                   records={payrolls}
                   selectedId={selectedPayroll?.id ?? null}
                   onSelect={setSelectedPayroll}
-                  onAddClick={() => {}}
+                  onAddClick={() => router.push(`/dashboard/payroll-entry?employeeId=${employee.id}`)}
                 />
               )
             )}

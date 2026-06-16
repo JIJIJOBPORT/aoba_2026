@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Employee, PayrollRecord } from '@/types';
 import { Calculator, Save, Upload, Copy } from 'lucide-react';
 import Papa from 'papaparse';
@@ -29,6 +30,7 @@ const emptyForm = {
 };
 
 export default function PayrollEntryPage() {
+  const searchParams = useSearchParams();
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [form, setForm] = useState(emptyForm);
   const [calculated, setCalculated] = useState<{
@@ -54,7 +56,14 @@ export default function PayrollEntryPage() {
   useEffect(() => {
     fetch('/api/employees')
       .then((r) => r.json())
-      .then((d) => d.success && setEmployees(d.data));
+      .then((d) => {
+        if (d.success) {
+          setEmployees(d.data);
+          const idFromUrl = searchParams.get('employeeId');
+          if (idFromUrl) setForm((f) => ({ ...f, employeeId: idFromUrl }));
+        }
+      });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const selectedEmployee = employees.find((e) => e.id === form.employeeId);
