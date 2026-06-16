@@ -1,0 +1,43 @@
+import { NextResponse } from 'next/server';
+import { getDriveClient } from '@/lib/google-auth';
+import { Readable } from 'stream';
+
+const FOLDER_ID = process.env.GOOGLE_DRIVE_FOLDER_ID;
+
+export async function POST(request: Request) {
+  try {
+    const formData = await request.formData();
+    const file = formData.get('file') as File | null;
+    const filename = formData.get('filename') as string | null;
+
+    if (!file || !filename) {
+      return NextResponse.json({ success: false, error: 'ファイルまたはファイル名がありません' }, { status: 400 });
+    }
+
+    if (!FOLDER_ID || FOLDER_ID === 'your_drive_folder_id_here') {
+      // ドライブ未設定の場合はスキップ（ローカルDLのみ）
+      return NextResponse.json({ success: true, driveId: null, message: 'Drive未設定のためローカル保存のみ' });
+    }
+
+    const drive = getDriveClient();
+    const buffer = await file.arrayBuffer();
+    const stream = Readable.from(Buffer.from(buffer));
+
+    const res = await drive.files.create({
+      requestBody: {
+        name: filename,
+        parents: [FOLDER_ID],
+        mimeType: 'application/pdf',
+      },
+      media: {
+        mimeType: 'application/pdf',
+        body: stream,
+      },
+    });
+
+    return NextResponse.json({ success: true, driveId: res.data.id });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+    return NextResponse.json({ success: false, error: message }, { status: 500 });
+  }
+}

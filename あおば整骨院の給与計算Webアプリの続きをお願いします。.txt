@@ -1,0 +1,41 @@
+あおば整骨院の給与計算Webアプリの続きをお願いします。
+## プロジェクト概要
+Next.js (App Router) + TypeScript + Tailwind CSS + Google Sheets (DB) + Google Drive (PDF保存)
+場所: C:\Users\[ユーザー名]\OneDrive\Desktop\CLAUDE（または添付ファイルのフォルダ）
+## 今日やること：Vercelデプロイ
+自宅PCで開発中のアプリを会社PCとも共有できるようVercelにデプロイしたい。
+### 手順
+1. service-account.json の内容を環境変数に変換するコード修正
+   - 現在: keyFile: './service-account.json' で読み込み
+   - 変更後: 環境変数 GOOGLE_SERVICE_ACCOUNT_JSON にJSONを文字列で入れる方式
+2. .gitignore に service-account.json と .env.local が含まれているか確認
+3. GitHubにpush
+4. Vercelにデプロイ
+5. Vercelの環境変数に以下を設定:
+   - GOOGLE_SERVICE_ACCOUNT_JSON（service-account.jsonの中身まるごと）
+   - GOOGLE_SPREADSHEET_ID
+   - GOOGLE_DRIVE_FOLDER_ID
+## 現在の環境変数（.env.local）
+GOOGLE_SERVICE_ACCOUNT_KEY_PATH=./service-account.json
+GOOGLE_SPREADSHEET_ID=1If2ZY6Rtvum5MoAIOCQqjLbJYkJjQg-DRTn0QLqwaOI
+GOOGLE_DRIVE_FOLDER_ID=your_drive_folder_id_here
+## 実装済みの主な機能
+- スタッフ一覧・詳細表示
+- 勤怠入力（カレンダー生成・区分クリック編集・有給管理）
+- 給与情報登録（社会保険・雇用保険・源泉所得税の自動計算）
+- 給与明細一覧・PDF出力
+- 有給取得記録（事前・事後登録、削除機能）
+- CSVインポート（源泉所得税マスタ）
+## Google Sheetsのシート構成
+- 社員マスタ（A:社員ID〜Q:扶養人数）
+- 給与・賞与明細履歴（28列）
+- 雇用保険料率マスタ
+- 社会保険料率マスタ
+- 有給管理
+- 源泉所得税マスタ
+- 有給取得記録
+- 勤怠記録
+## まだ未実装
+- 帳票出力ページ（賃金台帳・有給管理表）
+- 社員追加・編集フォーム
+- 設定ページ
