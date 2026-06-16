@@ -92,7 +92,7 @@ export default function PayrollEntryPage() {
         setCalculated({
           grossPay,
           ...d.data,
-          netPay: grossPay - d.data.totalDeductions - form.residentTax,
+          netPay: grossPay - d.data.totalDeductions,
         });
       } else {
         setMessage({ type: 'error', text: d.error });
@@ -136,7 +136,7 @@ export default function PayrollEntryPage() {
           childcareSupport: calculated.childcareSupport,
           incomeTax: calculated.incomeTax,
           residentTax: form.residentTax,
-          totalDeductions: calculated.totalDeductions + form.residentTax,
+          totalDeductions: calculated.totalDeductions,
           netPay: calculated.netPay,
           note: form.note,
         }),
@@ -371,7 +371,7 @@ export default function PayrollEntryPage() {
                 <SummaryRow label="所得税" value={calculated.incomeTax} />
                 <SummaryRow label="住民税" value={form.residentTax} />
                 <div className="border-t border-gray-100 pt-1">
-                  <SummaryRow label="控除合計" value={calculated.totalDeductions + form.residentTax} className="text-red-600 font-semibold" />
+                  <SummaryRow label="控除合計" value={calculated.totalDeductions} className="text-red-600 font-semibold" />
                 </div>
               </div>
 
