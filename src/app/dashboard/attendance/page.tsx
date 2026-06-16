@@ -155,7 +155,7 @@ export default function AttendancePage() {
           <select
             value={selectedId}
             onChange={(e) => setSelectedId(e.target.value)}
-            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#86AC41]"
           >
             {employees.map((e) => (
               <option key={e.id} value={e.id}>{e.id} {e.name}</option>
@@ -168,13 +168,13 @@ export default function AttendancePage() {
             type="month"
             value={yearMonth}
             onChange={(e) => setYearMonth(e.target.value)}
-            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#86AC41]"
           />
         </div>
         <button
           onClick={handleGenerate}
           disabled={generating || !selectedId}
-          className="flex items-center gap-1.5 px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 disabled:opacity-50 transition-colors"
+          className="flex items-center gap-1.5 px-4 py-2 bg-[#34675C] text-white text-sm rounded-lg hover:bg-[#2a5249] disabled:opacity-50 transition-colors"
         >
           <RefreshCw size={14} className={generating ? 'animate-spin' : ''} />
           {generating ? '生成中...' : 'カレンダー生成'}
@@ -287,8 +287,8 @@ export default function AttendancePage() {
                 <SummaryRow label="所定労働日数" value={`${summary.scheduledDays}日`} />
                 <SummaryRow label="所定労働時間" value={`${summary.scheduledHours}h`} />
                 <div className="border-t border-gray-100 pt-2">
-                  <SummaryRow label="実労働日数" value={`${summary.workedDays}日`} color="text-blue-600" />
-                  <SummaryRow label="実労働時間" value={`${summary.workedHours}h`} color="text-blue-600" />
+                  <SummaryRow label="実労働日数" value={`${summary.workedDays}日`} color="text-[#34675C]" />
+                  <SummaryRow label="実労働時間" value={`${summary.workedHours}h`} color="text-[#34675C]" />
                 </div>
                 <div className="border-t border-gray-100 pt-2">
                   <SummaryRow label="有給取得" value={`${summary.paidLeaveDays}日`} color="text-green-600" />

@@ -49,7 +49,7 @@ export default function PayrollListPage() {
               const emp = employees.find((em) => em.id === e.target.value) ?? null;
               setSelectedEmployee(emp);
             }}
-            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#86AC41]"
           >
             <option value="">社員を選択</option>
             {employees.map((e) => (
@@ -63,7 +63,7 @@ export default function PayrollListPage() {
             type="month"
             value={filterMonth}
             onChange={(e) => setFilterMonth(e.target.value)}
-            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#86AC41]"
           />
         </div>
         <div>
@@ -71,7 +71,7 @@ export default function PayrollListPage() {
           <select
             value={filterType}
             onChange={(e) => setFilterType(e.target.value as '' | '給与' | '賞与')}
-            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#86AC41]"
           >
             <option value="">すべて</option>
             <option value="給与">給与</option>
@@ -125,7 +125,7 @@ export default function PayrollListPage() {
                   <td className="px-3 py-3 text-center">
                     <button
                       onClick={() => setModalRecord(rec)}
-                      className="text-xs text-blue-600 border border-blue-300 px-3 py-1 rounded hover:bg-blue-50 transition-colors"
+                      className="text-xs text-[#34675C] border border-[#7DA3A1] px-3 py-1 rounded hover:bg-[#f0f5f5] transition-colors"
                     >
                       明細表示
                     </button>

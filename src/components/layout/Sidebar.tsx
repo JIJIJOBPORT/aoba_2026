@@ -18,10 +18,10 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-56 min-h-screen bg-slate-800 text-white flex flex-col">
+    <aside className="w-56 min-h-screen text-white flex flex-col" style={{ backgroundColor: '#324851' }}>
       {/* ロゴ */}
-      <div className="flex items-center gap-2 px-4 py-5 border-b border-slate-700">
-        <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+      <div className="flex items-center gap-2 px-4 py-5" style={{ borderBottom: '1px solid #7DA3A1' }}>
+        <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#86AC41' }}>
           <Building2 size={18} />
         </div>
         <span className="text-sm font-semibold leading-tight">
@@ -36,9 +36,16 @@ export default function Sidebar() {
             key={href}
             href={href}
             className={cn(
-              'flex items-center gap-3 px-4 py-3 text-sm transition-colors hover:bg-slate-700',
-              pathname === href ? 'bg-blue-600 text-white' : 'text-slate-300'
+              'flex items-center gap-3 px-4 py-3 text-sm transition-colors',
+              pathname === href ? 'text-white' : 'text-slate-300'
             )}
+            style={pathname === href ? { backgroundColor: '#34675C' } : undefined}
+            onMouseEnter={(e) => {
+              if (pathname !== href) (e.currentTarget as HTMLElement).style.backgroundColor = '#7DA3A1';
+            }}
+            onMouseLeave={(e) => {
+              if (pathname !== href) (e.currentTarget as HTMLElement).style.backgroundColor = '';
+            }}
           >
             <Icon size={18} />
             {label}
@@ -47,8 +54,8 @@ export default function Sidebar() {
       </nav>
 
       {/* 会社名 */}
-      <div className="px-4 py-4 border-t border-slate-700 text-xs text-slate-400">
-        <p className="font-medium text-slate-300">株式会社サンプル</p>
+      <div className="px-4 py-4 text-xs" style={{ borderTop: '1px solid #7DA3A1', color: '#7DA3A1' }}>
+        <p className="font-medium text-white">あおば整骨院</p>
         <p>管理者</p>
       </div>
     </aside>

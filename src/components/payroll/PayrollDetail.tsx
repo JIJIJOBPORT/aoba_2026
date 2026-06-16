@@ -11,9 +11,9 @@ interface Props {
   companyName?: string;
 }
 
-const GREEN = '#8fbc8f';
-const GREEN_DARK = '#6a9a6a';
-const GREEN_LIGHT = '#e8f3e8';
+const GREEN = '#34675C';
+const GREEN_DARK = '#2a5249';
+const GREEN_LIGHT = '#e8f0ef';
 
 export default function PayrollDetail({ employee, record, companyName = 'あおば整骨院' }: Props) {
   const [exporting, setExporting] = useState(false);

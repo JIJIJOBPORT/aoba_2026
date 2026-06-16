@@ -3,6 +3,12 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --color-primary: #86AC41;
+  --color-primary-dark: #6d9235;
+  --color-secondary: #34675C;
+  --color-secondary-dark: #2a5249;
+  --color-sidebar: #324851;
+  --color-mist: #7DA3A1;
 }
 
 /* ダークモード無効化 - 常にライトモードで表示 */
@@ -14,4 +20,12 @@ body {
 
 * {
   color-scheme: light;
+}
+
+/* グローバルボタンカラー上書き */
+.btn-primary {
+  background-color: var(--color-primary) !important;
+}
+.btn-primary:hover {
+  background-color: var(--color-primary-dark) !important;
 }

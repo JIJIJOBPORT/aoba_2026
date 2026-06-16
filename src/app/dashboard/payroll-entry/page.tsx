@@ -245,7 +245,7 @@ export default function PayrollEntryPage() {
     value: form[key] as number,
     onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
       setForm((f) => ({ ...f, [key]: Number(e.target.value) })),
-    className: 'w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500',
+    className: 'w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#86AC41]',
   });
 
   return (
@@ -263,7 +263,7 @@ export default function PayrollEntryPage() {
             <select
               value={form.employeeId}
               onChange={(e) => { setForm((f) => ({ ...f, employeeId: e.target.value })); setCalculated(null); }}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#86AC41]"
             >
               <option value="">社員を選択してください</option>
               {employees.map((e) => (
@@ -285,7 +285,7 @@ export default function PayrollEntryPage() {
                 type="month"
                 value={form.paymentMonth}
                 onChange={(e) => handleWorkMonthChange(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#86AC41]"
               />
             </div>
             <div>
@@ -297,7 +297,7 @@ export default function PayrollEntryPage() {
                 type="date"
                 value={form.paymentDate}
                 onChange={(e) => setForm((f) => ({ ...f, paymentDate: e.target.value }))}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#86AC41]"
               />
             </div>
           </div>
@@ -306,7 +306,7 @@ export default function PayrollEntryPage() {
             <select
               value={form.recordType}
               onChange={(e) => setForm((f) => ({ ...f, recordType: e.target.value as PayrollRecord['recordType'] }))}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#86AC41]"
             >
               <option value="給与">給与</option>
               <option value="賞与">賞与</option>
@@ -352,7 +352,7 @@ export default function PayrollEntryPage() {
               value={form.note}
               onChange={(e) => setForm((f) => ({ ...f, note: e.target.value }))}
               rows={2}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#86AC41]"
             />
           </div>
 
@@ -361,7 +361,7 @@ export default function PayrollEntryPage() {
             <button
               onClick={handleCalculate}
               disabled={!form.employeeId || calculating}
-              className="flex items-center gap-1.5 px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 disabled:opacity-50 transition-colors"
+              className="flex items-center gap-1.5 px-4 py-2 bg-[#34675C] text-white text-sm rounded-lg hover:bg-[#2a5249] disabled:opacity-50 transition-colors"
             >
               <Calculator size={14} />
               {calculating ? '計算中...' : '自動計算'}
@@ -369,7 +369,7 @@ export default function PayrollEntryPage() {
             <button
               onClick={handleSave}
               disabled={!calculated || saving}
-              className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+              className="flex items-center gap-1.5 px-4 py-2 bg-[#86AC41] text-white text-sm rounded-lg hover:bg-[#6d9235] disabled:opacity-50 transition-colors"
             >
               <Save size={14} />
               {saving ? '保存中...' : '保存'}
@@ -417,7 +417,7 @@ export default function PayrollEntryPage() {
                 </div>
               </div>
 
-              <div className="bg-blue-600 text-white rounded-lg px-4 py-3 flex justify-between items-center">
+              <div className="bg-[#86AC41] text-white rounded-lg px-4 py-3 flex justify-between items-center">
                 <span className="text-sm font-semibold">差引支給額</span>
                 <span className="text-xl font-bold">{calculated.netPay.toLocaleString()}円</span>
               </div>
@@ -447,7 +447,7 @@ export default function PayrollEntryPage() {
               </div>
               <button
                 onClick={handleDownloadTemplate}
-                className="text-xs text-blue-600 underline hover:text-blue-800 mt-4"
+                className="text-xs text-[#34675C] underline hover:text-blue-800 mt-4"
               >
                 テンプレートCSVをダウンロード
               </button>
@@ -481,7 +481,7 @@ export default function PayrollEntryPage() {
                   type="month"
                   value={csvMonth}
                   onChange={(e) => setCsvMonth(e.target.value)}
-                  className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#86AC41]"
                 />
               </div>
               <div>
@@ -511,7 +511,7 @@ export default function PayrollEntryPage() {
                   type="number"
                   value={taxYear}
                   onChange={(e) => setTaxYear(e.target.value)}
-                  className="w-24 border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-24 border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#86AC41]"
                 />
               </div>
               <div className="flex items-center gap-1.5">
