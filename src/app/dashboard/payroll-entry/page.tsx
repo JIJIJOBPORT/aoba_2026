@@ -154,6 +154,48 @@ export default function PayrollEntryPage() {
     }
   };
 
+  // 給与データ一括取込
+  const [bulkCsvResult, setBulkCsvResult] = useState<string | null>(null);
+  const [bulkCsvErrors, setBulkCsvErrors] = useState<string[]>([]);
+
+  const handleBulkCsvUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      complete: async (result) => {
+        setBulkCsvResult(null);
+        setBulkCsvErrors([]);
+        const res = await fetch('/api/payroll/bulk-import', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ rows: result.data }),
+        });
+        const d = await res.json();
+        if (d.success) {
+          setBulkCsvResult(d.message);
+          setBulkCsvErrors(d.errors ?? []);
+        } else {
+          setBulkCsvResult(`エラー: ${d.error}`);
+        }
+      },
+    });
+    e.target.value = '';
+  };
+
+  const handleDownloadTemplate = () => {
+    const header = '社員ID,勤務月,支払日,区分,基本給,役職手当,家族手当,住宅手当,その他手当,時間外手当,交通費,健康保険,厚生年金,雇用保険,介護保険,子育て支援金,所得税,住民税,備考';
+    const sample = 'nagai,2026-04,2026-05-25,給与,300000,0,0,0,0,0,0,15180,27450,1499,2430,345,4590,4900,';
+    const blob = new Blob([header + '\n' + sample], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = '給与データ取込テンプレート.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   // 社会保険料CSV取込（給与明細の更新）
   const handleCsvUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -386,11 +428,47 @@ export default function PayrollEntryPage() {
             </div>
           )}
 
-          {/* ① 社会保険料・住民税CSV取込 */}
+          {/* ① 給与データ一括取込 */}
           <div className="bg-white rounded-lg border border-gray-200 p-5">
             <h2 className="font-semibold text-gray-700 mb-2 flex items-center gap-2">
               <Upload size={16} />
-              ① 社会保険料・住民税 CSV取込
+              ① 過去給与データ 一括取込
+            </h2>
+            <p className="text-xs text-gray-500 mb-1">
+              CSVで過去の給与データをまとめて取込みます。総支給額・控除合計・差引支給額は自動計算されます。
+            </p>
+            <p className="text-xs text-gray-400 mb-3">
+              必須列: <code className="bg-gray-100 px-1 rounded">社員ID, 勤務月, 支払日, 区分, 基本給, 役職手当, 家族手当, 住宅手当, その他手当, 時間外手当, 交通費, 健康保険, 厚生年金, 雇用保険, 介護保険, 子育て支援金, 所得税, 住民税, 備考</code>
+            </p>
+            <div className="flex gap-3 items-center flex-wrap mb-2">
+              <div>
+                <label className="block text-xs text-gray-500 mb-1">CSVファイル</label>
+                <input type="file" accept=".csv" onChange={handleBulkCsvUpload} className="text-sm text-gray-600" />
+              </div>
+              <button
+                onClick={handleDownloadTemplate}
+                className="text-xs text-blue-600 underline hover:text-blue-800 mt-4"
+              >
+                テンプレートCSVをダウンロード
+              </button>
+            </div>
+            {bulkCsvResult && (
+              <div className={`mt-2 text-sm rounded px-3 py-2 ${bulkCsvResult.startsWith('エラー') ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'}`}>
+                {bulkCsvResult}
+                {bulkCsvErrors.length > 0 && (
+                  <ul className="mt-1 text-xs list-disc list-inside">
+                    {bulkCsvErrors.map((e, i) => <li key={i}>{e}</li>)}
+                  </ul>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* ③ 社会保険料・住民税CSV取込 */}
+          <div className="bg-white rounded-lg border border-gray-200 p-5">
+            <h2 className="font-semibold text-gray-700 mb-2 flex items-center gap-2">
+              <Upload size={16} />
+              ② 社会保険料・住民税 CSV取込
             </h2>
             <p className="text-xs text-gray-500 mb-3">
               既存の給与明細レコードの保険料・税額を一括更新します。<br />
@@ -416,11 +494,11 @@ export default function PayrollEntryPage() {
             )}
           </div>
 
-          {/* ② 源泉所得税マスタCSV取込 */}
+          {/* ③ 源泉所得税マスタCSV取込 */}
           <div className="bg-white rounded-lg border border-gray-200 p-5">
             <h2 className="font-semibold text-gray-700 mb-2 flex items-center gap-2">
               <Upload size={16} />
-              ② 源泉所得税マスタ CSV取込
+              ③ 源泉所得税マスタ CSV取込
             </h2>
             <p className="text-xs text-gray-500 mb-3">
               国税庁の月額表をCSVで登録します。<br />
