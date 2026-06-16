@@ -46,7 +46,10 @@ export async function POST(request: Request) {
 
     for (const [mm, amount] of Object.entries(months)) {
       if (!amount) continue;
-      const yearMonth = `${year}-${mm}`;
+      // 6〜12月は同年、1〜5月は翌年（住民税は6月始まり）
+      const monthNum = parseInt(mm);
+      const actualYear = monthNum >= 6 ? parseInt(year) : parseInt(year) + 1;
+      const yearMonth = `${actualYear}-${mm}`;
       const existingIndex = rows.findIndex((r) => r[0] === employeeId && r[1] === yearMonth);
 
       if (existingIndex >= 0) {
