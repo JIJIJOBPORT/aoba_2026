@@ -62,6 +62,32 @@ export async function updateRow(
   });
 }
 
+// 指定行を削除（rowIndex: 2始まり = データ1行目）
+export async function deleteRow(sheetName: string, rowIndex: number): Promise<void> {
+  const sheets = getSheetsClient();
+  // シートIDをシート名から取得
+  const meta = await sheets.spreadsheets.get({ spreadsheetId: SPREADSHEET_ID });
+  const sheet = meta.data.sheets?.find((s) => s.properties?.title === sheetName);
+  if (!sheet?.properties?.sheetId === undefined) throw new Error(`シート "${sheetName}" が見つかりません`);
+  const sheetId = sheet!.properties!.sheetId!;
+
+  await sheets.spreadsheets.batchUpdate({
+    spreadsheetId: SPREADSHEET_ID,
+    requestBody: {
+      requests: [{
+        deleteDimension: {
+          range: {
+            sheetId,
+            dimension: 'ROWS',
+            startIndex: rowIndex - 1, // 0-based
+            endIndex: rowIndex,       // exclusive
+          },
+        },
+      }],
+    },
+  });
+}
+
 // 列番号をアルファベットに変換 (1→A, 26→Z, 27→AA)
 function columnLetter(col: number): string {
   let result = '';

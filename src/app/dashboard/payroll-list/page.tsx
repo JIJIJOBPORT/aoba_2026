@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Employee, PayrollRecord } from '@/types';
-import { X, Pencil, Check } from 'lucide-react';
+import { X, Pencil, Check, Trash2 } from 'lucide-react';
 import PayrollDetail from '@/components/payroll/PayrollDetail';
 
 export default function PayrollListPage() {
@@ -16,6 +16,7 @@ export default function PayrollListPage() {
   const [editingAtt, setEditingAtt] = useState(false);
   const [attForm, setAttForm] = useState({ workDays: 0, paidLeaveDays: 0, absentDays: 0, workHours: 0, overtimeHours: 0, note: '' });
   const [attSaving, setAttSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
     fetch('/api/employees')
@@ -31,6 +32,27 @@ export default function PayrollListPage() {
       .then((d) => d.success && setPayrolls(d.data))
       .finally(() => setLoading(false));
   }, [selectedEmployee]);
+
+  const handleDelete = async (rec: typeof payrolls[number]) => {
+    if (!confirm(`${rec.paymentMonth} の給与データを削除しますか？\nこの操作は取り消せません。`)) return;
+    setDeletingId(rec.id);
+    try {
+      const res = await fetch('/api/payroll/delete', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: rec.id }),
+      });
+      const d = await res.json();
+      if (d.success) {
+        setPayrolls((ps) => ps.filter((p) => p.id !== rec.id));
+        if (modalRecord?.id === rec.id) setModalRecord(null);
+      } else {
+        alert(`削除エラー: ${d.error}`);
+      }
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   const filtered = payrolls.filter((p) => {
     if (filterMonth && !p.paymentMonth.startsWith(filterMonth)) return false;
@@ -110,6 +132,7 @@ export default function PayrollListPage() {
                 <th className="text-right px-3 py-3">控除合計</th>
                 <th className="text-right px-4 py-3">差引支給額</th>
                 <th className="text-center px-3 py-3">明細</th>
+                <th className="text-center px-3 py-3">削除</th>
               </tr>
             </thead>
             <tbody>
@@ -132,9 +155,18 @@ export default function PayrollListPage() {
                         setEditingAtt(false);
                         setAttForm({ workDays: rec.workDays, paidLeaveDays: rec.paidLeaveDays, absentDays: rec.absentDays, workHours: rec.workHours, overtimeHours: rec.overtimeHours, note: rec.note });
                       }}
-                      className="text-xs text-[#34675C] border border-[#7DA3A1] px-3 py-1 rounded hover:bg-[#f0f5f5] transition-colors"
+                      className="text-xs text-[#34675C] border border-[#7DA3A1] px-3 py-1 rounded hover:bg-[#f0f5f4] transition-colors"
                     >
                       明細表示
+                    </button>
+                  </td>
+                  <td className="px-3 py-3 text-center">
+                    <button
+                      onClick={() => handleDelete(rec)}
+                      disabled={deletingId === rec.id}
+                      className="text-xs text-red-500 border border-red-200 px-2 py-1 rounded hover:bg-red-50 transition-colors disabled:opacity-40"
+                    >
+                      {deletingId === rec.id ? '削除中...' : <Trash2 size={13} />}
                     </button>
                   </td>
                 </tr>
@@ -143,6 +175,7 @@ export default function PayrollListPage() {
             <tfoot>
               <tr className="bg-gray-50 border-t-2 border-gray-300 text-sm font-semibold">
                 <td className="px-4 py-2 text-gray-600" colSpan={3}>合計 {filtered.length}件</td>
+
                 <td className="px-3 py-2 text-right text-gray-700">
                   {filtered.reduce((s, r) => s + r.grossPay, 0).toLocaleString()}
                 </td>
@@ -152,6 +185,7 @@ export default function PayrollListPage() {
                 <td className="px-4 py-2 text-right text-[#34675C]">
                   {filtered.reduce((s, r) => s + r.netPay, 0).toLocaleString()}
                 </td>
+                <td />
                 <td />
               </tr>
             </tfoot>
