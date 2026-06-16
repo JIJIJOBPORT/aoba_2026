@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { Employee, PayrollRecord } from '@/types';
 import { Pencil, Mail, Phone, Building2, Calendar } from 'lucide-react';
 import PayrollTable from '@/components/payroll/PayrollTable';
-import PayrollDetail from '@/components/payroll/PayrollDetail';
 
 interface Props {
   employee: Employee;
@@ -124,12 +123,6 @@ export default function EmployeeDetail({ employee }: Props) {
         </div>
       </div>
 
-      {/* 右：給与明細プレビュー */}
-      {selectedPayroll && (
-        <div className="w-64 flex-shrink-0">
-          <PayrollDetail employee={employee} record={selectedPayroll} />
-        </div>
-      )}
     </div>
   );
 }
