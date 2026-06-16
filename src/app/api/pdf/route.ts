@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getDriveClient } from '@/lib/google-auth';
+import { getSheetRows, updateRow, SHEETS } from '@/lib/sheets';
 import { Readable } from 'stream';
 
 const ROOT_FOLDER_ID = process.env.GOOGLE_DRIVE_FOLDER_ID;
@@ -37,6 +38,7 @@ export async function POST(request: Request) {
     const file = formData.get('file') as File | null;
     const filename = formData.get('filename') as string | null;
     const employeeName = formData.get('employeeName') as string | null;
+    const payrollId = formData.get('payrollId') as string | null;
 
     if (!file || !filename) {
       return NextResponse.json({ success: false, error: 'ファイルまたはファイル名がありません' }, { status: 400 });
@@ -90,7 +92,22 @@ export async function POST(request: Request) {
       supportsAllDrives: true,
     });
 
-    return NextResponse.json({ success: true, driveId: res.data.id });
+    const driveFileId = res.data.id!;
+    const pdfUrl = `https://drive.google.com/file/d/${driveFileId}/view`;
+
+    // 給与シートのAC列（index 28）にPDF URLを書き込む
+    if (payrollId) {
+      const rows = await getSheetRows(SHEETS.PAYROLL);
+      const index = rows.findIndex((r) => r[0] === payrollId);
+      if (index >= 0) {
+        const row = [...rows[index]];
+        while (row.length < 29) row.push('');
+        row[28] = pdfUrl;
+        await updateRow(SHEETS.PAYROLL, index + 2, row);
+      }
+    }
+
+    return NextResponse.json({ success: true, driveId: driveFileId, pdfUrl });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err);
     return NextResponse.json({ success: false, error: message }, { status: 500 });

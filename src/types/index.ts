@@ -52,7 +52,8 @@ export interface PayrollRecord {
   residentTax: number;          // W: 住民税
   totalDeductions: number;      // X: 控除合計
   netPay: number;               // Y: 差引支給額
-  note: string;                 // Z: 備考
+  note: string;                 // AB: 備考
+  pdfUrl: string;               // AC: PDF保存先URL
 }
 
 // 雇用保険料率マスタ

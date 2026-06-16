@@ -31,6 +31,7 @@ function rowToRecord(row: string[]): PayrollRecord {
     totalDeductions: parseNumber(row[25]),
     netPay: parseNumber(row[26]),
     note: row[27] ?? '',
+    pdfUrl: row[28] ?? '',
   };
 }
 

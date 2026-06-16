@@ -31,6 +31,7 @@ export default function PayrollDetail({ employee, record, companyName = 'あお�
       formData.append('file', blob, filename);
       formData.append('filename', filename);
       formData.append('employeeName', employee.name);
+      formData.append('payrollId', record.id);
       const driveRes = await fetch('/api/pdf', { method: 'POST', body: formData });
       const driveData = await driveRes.json();
       if (!driveData.success) {
