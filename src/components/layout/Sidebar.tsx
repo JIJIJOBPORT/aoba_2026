@@ -2,8 +2,9 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Users, FileText, DollarSign, List, Settings, Building2, Clock } from 'lucide-react';
+import { Users, FileText, DollarSign, List, Settings, Building2, Clock, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { signOut, useSession } from 'next-auth/react';
 
 const navItems = [
   { href: '/dashboard', label: 'スタッフ一覧', icon: Users },
@@ -16,6 +17,7 @@ const navItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const { data: session } = useSession();
 
   return (
     <aside className="w-56 min-h-screen text-white flex flex-col" style={{ backgroundColor: '#324851' }}>
@@ -53,10 +55,17 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      {/* 会社名 */}
+      {/* ユーザー情報・ログアウト */}
       <div className="px-4 py-4 text-xs" style={{ borderTop: '1px solid #7DA3A1', color: '#7DA3A1' }}>
         <p className="font-medium text-white">あおば整骨院</p>
-        <p>管理者</p>
+        <p>{session?.user?.name ?? session?.user?.email}</p>
+        <button
+          onClick={() => signOut({ callbackUrl: '/login' })}
+          className="mt-3 flex items-center gap-1.5 text-xs hover:text-white transition-colors"
+        >
+          <LogOut size={13} />
+          ログアウト
+        </button>
       </div>
     </aside>
   );
