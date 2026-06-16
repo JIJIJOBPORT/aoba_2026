@@ -134,6 +134,18 @@ export default function PayrollEntryPage() {
     setMessage(null);
 
     try {
+      // 勤怠データを自動取得
+      let workDays = 0, paidLeaveDays = 0, absentDays = 0, workHours = 0, overtimeHours = 0;
+      const attRes = await fetch(`/api/attendance?employeeId=${form.employeeId}&yearMonth=${form.paymentMonth}`);
+      const attData = await attRes.json();
+      if (attData.success && attData.summary) {
+        workDays = attData.summary.workedDays ?? 0;
+        paidLeaveDays = attData.summary.paidLeaveDays ?? 0;
+        absentDays = attData.summary.absentDays ?? 0;
+        workHours = attData.summary.workedHours ?? 0;
+        overtimeHours = 0;
+      }
+
       const res = await fetch('/api/payroll/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -142,11 +154,11 @@ export default function PayrollEntryPage() {
           paymentMonth: form.paymentMonth,
           paymentDate: form.paymentDate,
           recordType: form.recordType,
-          workDays: form.workDays,
-          paidLeaveDays: form.paidLeaveDays,
-          absentDays: form.absentDays,
-          workHours: form.workHours,
-          overtimeHours: form.overtimeHours,
+          workDays,
+          paidLeaveDays,
+          absentDays,
+          workHours,
+          overtimeHours,
           basicSalary: form.basicSalary,
           positionAllowance: form.positionAllowance,
           familyAllowance: form.familyAllowance,
@@ -339,16 +351,11 @@ export default function PayrollEntryPage() {
             </select>
           </div>
 
-          {/* 勤怠 */}
-          <div className="border-t border-gray-100 pt-4 mb-4">
-            <p className="text-xs font-semibold text-gray-500 mb-2">【勤怠】</p>
-            <div className="space-y-2">
-              <Row label="出勤日数"><input {...numField('workDays')} /></Row>
-              <Row label="有給取得日数"><input {...numField('paidLeaveDays')} /></Row>
-              <Row label="欠勤日数"><input {...numField('absentDays')} /></Row>
-              <Row label="勤務時間"><input {...numField('workHours')} /></Row>
-              <Row label="残業時間"><input {...numField('overtimeHours')} /></Row>
-            </div>
+          {/* 勤怠：自動取得 */}
+          <div className="border-t border-gray-100 pt-3 mb-4">
+            <p className="text-xs text-gray-400 bg-gray-50 rounded px-3 py-2">
+              勤怠情報（出勤日数・時間・有給）は保存時に勤怠データから自動取得します
+            </p>
           </div>
 
           {/* 支給項目 */}

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Employee, PayrollRecord } from '@/types';
-import { X } from 'lucide-react';
+import { X, Pencil, Check } from 'lucide-react';
 import PayrollDetail from '@/components/payroll/PayrollDetail';
 
 export default function PayrollListPage() {
@@ -13,6 +13,9 @@ export default function PayrollListPage() {
   const [filterType, setFilterType] = useState<'' | '給与' | '賞与'>('');
   const [loading, setLoading] = useState(false);
   const [modalRecord, setModalRecord] = useState<PayrollRecord | null>(null);
+  const [editingAtt, setEditingAtt] = useState(false);
+  const [attForm, setAttForm] = useState({ workDays: 0, paidLeaveDays: 0, absentDays: 0, workHours: 0, overtimeHours: 0, note: '' });
+  const [attSaving, setAttSaving] = useState(false);
 
   useEffect(() => {
     fetch('/api/employees')
@@ -124,7 +127,11 @@ export default function PayrollListPage() {
                   <td className="px-4 py-3 text-right font-bold text-gray-800">{rec.netPay.toLocaleString()}</td>
                   <td className="px-3 py-3 text-center">
                     <button
-                      onClick={() => setModalRecord(rec)}
+                      onClick={() => {
+                        setModalRecord(rec);
+                        setEditingAtt(false);
+                        setAttForm({ workDays: rec.workDays, paidLeaveDays: rec.paidLeaveDays, absentDays: rec.absentDays, workHours: rec.workHours, overtimeHours: rec.overtimeHours, note: rec.note });
+                      }}
                       className="text-xs text-[#34675C] border border-[#7DA3A1] px-3 py-1 rounded hover:bg-[#f0f5f5] transition-colors"
                     >
                       明細表示
@@ -166,6 +173,58 @@ export default function PayrollListPage() {
               >
                 <X size={18} />
               </button>
+            </div>
+            {/* 勤怠手修正パネル */}
+            <div className="px-5 py-3 bg-gray-50 border-b border-gray-200">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-semibold text-gray-500">勤怠情報（手修正）</span>
+                {!editingAtt ? (
+                  <button onClick={() => setEditingAtt(true)} className="flex items-center gap-1 text-xs text-[#34675C] border border-[#7DA3A1] px-2 py-1 rounded hover:bg-[#f0f5f5]">
+                    <Pencil size={11} />修正
+                  </button>
+                ) : (
+                  <div className="flex gap-2">
+                    <button onClick={() => setEditingAtt(false)} className="text-xs text-gray-500 px-2 py-1 rounded hover:bg-gray-200">キャンセル</button>
+                    <button
+                      disabled={attSaving}
+                      onClick={async () => {
+                        setAttSaving(true);
+                        const res = await fetch('/api/payroll/update', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: modalRecord.id, ...attForm }) });
+                        const d = await res.json();
+                        if (d.success) {
+                          setModalRecord({ ...modalRecord, ...attForm });
+                          setPayrolls(ps => ps.map(p => p.id === modalRecord.id ? { ...p, ...attForm } : p));
+                          setEditingAtt(false);
+                        }
+                        setAttSaving(false);
+                      }}
+                      className="flex items-center gap-1 text-xs text-white px-3 py-1 rounded"
+                      style={{ backgroundColor: '#34675C' }}
+                    >
+                      <Check size={11} />{attSaving ? '保存中...' : '保存'}
+                    </button>
+                  </div>
+                )}
+              </div>
+              <div className="grid grid-cols-5 gap-2 text-xs">
+                {[
+                  { label: '出勤日数', key: 'workDays' as const },
+                  { label: '有給日数', key: 'paidLeaveDays' as const },
+                  { label: '欠勤日数', key: 'absentDays' as const },
+                  { label: '勤務時間', key: 'workHours' as const },
+                  { label: '残業時間', key: 'overtimeHours' as const },
+                ].map(({ label, key }) => (
+                  <div key={key}>
+                    <div className="text-gray-400 mb-1">{label}</div>
+                    {editingAtt ? (
+                      <input type="number" value={attForm[key]} onChange={e => setAttForm(f => ({ ...f, [key]: Number(e.target.value) }))}
+                        className="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-[#86AC41]" />
+                    ) : (
+                      <div className="font-medium text-gray-700">{modalRecord[key]}</div>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
             <div className="p-5">
               <PayrollDetail employee={selectedEmployee} record={modalRecord} />
