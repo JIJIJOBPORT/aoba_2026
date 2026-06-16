@@ -17,9 +17,11 @@ const GREEN_LIGHT = '#e8f0ef';
 
 export default function PayrollDetail({ employee, record, companyName = 'あおば整骨院' }: Props) {
   const [exporting, setExporting] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
 
   const handleExportPdf = async () => {
     setExporting(true);
+    setExportError(null);
     try {
       const blob = await generatePayrollPdf('payroll-print-area');
       const [year, month] = record.paymentMonth.split('-');
@@ -31,6 +33,8 @@ export default function PayrollDetail({ employee, record, companyName = 'あお�
       formData.append('filename', filename);
       formData.append('employeeName', employee.name);
       await fetch('/api/pdf', { method: 'POST', body: formData });
+    } catch (err) {
+      setExportError(err instanceof Error ? err.message : String(err));
     } finally {
       setExporting(false);
     }
@@ -46,7 +50,10 @@ export default function PayrollDetail({ employee, record, companyName = 'あお�
   return (
     <div className="bg-white rounded-lg border border-gray-200">
       {/* PDF出力ボタン */}
-      <div className="flex items-center justify-end px-4 py-3 border-b border-gray-200">
+      <div className="flex items-center justify-end gap-3 px-4 py-3 border-b border-gray-200">
+        {exportError && (
+          <span className="text-xs text-red-600 bg-red-50 px-3 py-1.5 rounded-lg">{exportError}</span>
+        )}
         <button
           onClick={handleExportPdf}
           disabled={exporting}
