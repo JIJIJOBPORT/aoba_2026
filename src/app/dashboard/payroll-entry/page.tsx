@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Employee, PayrollRecord } from '@/types';
-import { Calculator, Save, Upload } from 'lucide-react';
+import { Calculator, Save, Upload, Copy } from 'lucide-react';
 import Papa from 'papaparse';
 
 const CURRENT_MONTH = new Date().toISOString().slice(0, 7);
@@ -44,6 +44,7 @@ export default function PayrollEntryPage() {
   } | null>(null);
   const [calculating, setCalculating] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [copying, setCopying] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   // CSV取込
@@ -58,13 +59,38 @@ export default function PayrollEntryPage() {
 
   const selectedEmployee = employees.find((e) => e.id === form.employeeId);
 
-  // 勤務月が変わったら支払日を翌月25日に自動セット
-  const handleWorkMonthChange = (yearMonth: string) => {
+  // 勤務月が変わったら支払日を翌月25日に自動セット＋住民税を自動取得
+  const handleWorkMonthChange = async (yearMonth: string) => {
     const [y, m] = yearMonth.split('-').map(Number);
     const nextMonth = m === 12 ? `${y + 1}-01` : `${y}-${String(m + 1).padStart(2, '0')}`;
     const paymentDate = `${nextMonth}-25`;
     setForm((f) => ({ ...f, paymentMonth: yearMonth, paymentDate }));
     setCalculated(null);
+
+    // 住民税マスタから自動取得（支払月で検索）
+    if (form.employeeId) {
+      const res = await fetch(`/api/resident-tax?employeeId=${form.employeeId}&yearMonth=${nextMonth}`);
+      const d = await res.json();
+      if (d.success && d.data.length > 0) {
+        setForm((f) => ({ ...f, paymentMonth: yearMonth, paymentDate, residentTax: d.data[0].amount }));
+      }
+    }
+  };
+
+  // 前月コピー
+  const handleCopyPrevMonth = async () => {
+    if (!form.employeeId || !form.paymentMonth) return;
+    setCopying(true); setMessage(null);
+    const res = await fetch(`/api/payroll/previous-month?employeeId=${form.employeeId}&paymentMonth=${form.paymentMonth}`);
+    const d = await res.json();
+    setCopying(false);
+    if (d.success) {
+      setForm((f) => ({ ...f, ...d.data }));
+      setCalculated(null);
+      setMessage({ type: 'success', text: '前月のデータをコピーしました' });
+    } else {
+      setMessage({ type: 'error', text: d.error });
+    }
   };
 
   const handleCalculate = useCallback(async () => {
@@ -357,7 +383,15 @@ export default function PayrollEntryPage() {
           </div>
 
           {/* ボタン */}
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={handleCopyPrevMonth}
+              disabled={!form.employeeId || copying}
+              className="flex items-center gap-1.5 px-4 py-2 border border-[#7DA3A1] text-[#34675C] text-sm rounded-lg hover:bg-[#f0f5f5] disabled:opacity-50 transition-colors"
+            >
+              <Copy size={14} />
+              {copying ? 'コピー中...' : '前月コピー'}
+            </button>
             <button
               onClick={handleCalculate}
               disabled={!form.employeeId || calculating}

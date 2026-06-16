@@ -2,15 +2,17 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Users, FileText, DollarSign, List, Settings, Building2, Clock, LogOut } from 'lucide-react';
+import { Users, FileText, DollarSign, List, Settings, Building2, Clock, LogOut, CalendarCheck, Landmark } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { signOut, useSession } from 'next-auth/react';
 
 const navItems = [
   { href: '/dashboard', label: 'スタッフ一覧', icon: Users },
   { href: '/dashboard/attendance', label: '勤怠入力', icon: Clock },
+  { href: '/dashboard/paid-leave', label: '有給管理', icon: CalendarCheck },
   { href: '/dashboard/payroll-entry', label: '給与情報登録', icon: DollarSign },
   { href: '/dashboard/payroll-list', label: '給与明細一覧', icon: List },
+  { href: '/dashboard/resident-tax', label: '住民税管理', icon: Landmark },
   { href: '/dashboard/reports', label: '帳票出力', icon: FileText },
   { href: '/dashboard/settings', label: '設定', icon: Settings },
 ];
