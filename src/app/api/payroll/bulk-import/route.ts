@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getSheetsClient, getAuthClient } from '@/lib/google-auth';
-import { google } from 'googleapis';
+import { getSheetsClient } from '@/lib/google-auth';
 
 const SPREADSHEET_ID = process.env.GOOGLE_SPREADSHEET_ID!;
 const SHEET = '給与・賞与明細履歴';

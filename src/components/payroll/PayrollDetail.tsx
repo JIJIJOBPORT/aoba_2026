@@ -168,25 +168,19 @@ export default function PayrollDetail({ employee, record, companyName = 'あお�
   );
 }
 
-function SlipTable({ label, color, colorLight, children }: {
+function SlipTable({ label, color, children }: {
   label: string;
   color: string;
-  colorLight: string;
+  colorLight?: string;
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex rounded-lg overflow-hidden border-2" style={{ borderColor: color }}>
-      {/* 縦見出し */}
-      <div
-        className="flex items-center justify-center px-2 writing-mode-vertical"
-        style={{ backgroundColor: color, color: 'white', writingMode: 'vertical-rl', minWidth: 32 }}
-      >
-        <span className="text-sm font-bold tracking-widest" style={{ writingMode: 'vertical-rl' }}>{label}</span>
+    <div className="rounded-lg overflow-hidden border-2" style={{ borderColor: color }}>
+      {/* 横見出し */}
+      <div className="px-3 py-1 text-sm font-bold text-white" style={{ backgroundColor: color }}>
+        {label}
       </div>
-      {/* テーブル本体 */}
-      <div className="flex-1">
-        {children}
-      </div>
+      <div>{children}</div>
     </div>
   );
 }
