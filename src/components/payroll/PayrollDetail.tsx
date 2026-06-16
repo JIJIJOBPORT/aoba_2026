@@ -154,10 +154,12 @@ export default function PayrollDetail({ employee, record, companyName = 'あお�
           </div>
 
           {/* 差引支給額 */}
-          <div className="flex flex-col items-center justify-center rounded-lg px-6 py-3 min-w-36" style={{ backgroundColor: GREEN }}>
-            <div className="text-xs font-bold text-white mb-1">差引支給額</div>
-            <div className="text-2xl font-bold text-white">{record.netPay.toLocaleString()}</div>
-            <div className="text-xs text-white">円</div>
+          <div className="flex flex-col rounded-lg overflow-hidden min-w-44" style={{ border: `2px solid ${GREEN}` }}>
+            <div className="text-xs font-bold text-center py-1.5" style={{ backgroundColor: GREEN, color: 'white' }}>差引支給額</div>
+            <div className="bg-white flex items-center justify-end gap-1 px-3 py-3">
+              <span className="text-2xl font-bold text-gray-800">{record.netPay.toLocaleString()}</span>
+              <span className="text-sm font-medium text-gray-600">円</span>
+            </div>
           </div>
         </div>
 
