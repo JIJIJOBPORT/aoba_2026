@@ -93,21 +93,22 @@ export async function POST(request: Request) {
     });
 
     const driveFileId = res.data.id!;
-    const pdfUrl = `https://drive.google.com/file/d/${driveFileId}/view`;
+    // Appsheet File列用パス: employeeName/filename（aobaフォルダを基準フォルダに設定）
+    const filePath = employeeName ? `${employeeName}/${filename}` : filename!;
 
-    // 給与シートのAC列（index 28）にPDF URLを書き込む
+    // 給与シートのAC列（index 28）にファイルパスを書き込む
     if (payrollId) {
       const rows = await getSheetRows(SHEETS.PAYROLL);
       const index = rows.findIndex((r) => r[0] === payrollId);
       if (index >= 0) {
         const row = [...rows[index]];
         while (row.length < 29) row.push('');
-        row[28] = pdfUrl;
+        row[28] = filePath;
         await updateRow(SHEETS.PAYROLL, index + 2, row);
       }
     }
 
-    return NextResponse.json({ success: true, driveId: driveFileId, pdfUrl });
+    return NextResponse.json({ success: true, driveId: driveFileId, filePath });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err);
     return NextResponse.json({ success: false, error: message }, { status: 500 });
