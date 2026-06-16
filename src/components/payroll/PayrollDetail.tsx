@@ -51,7 +51,7 @@ export default function PayrollDetail({ employee, record, companyName = 'あお�
           onClick={handleExportPdf}
           disabled={exporting}
           className="flex items-center gap-1.5 px-4 py-2 text-white text-sm rounded-lg disabled:opacity-50 transition-colors"
-          style={{ backgroundColor: GREEN, hover: GREEN_DARK }}
+          style={{ backgroundColor: GREEN }}
         >
           <FileDown size={14} />
           {exporting ? '生成中...' : 'PDF出力'}
