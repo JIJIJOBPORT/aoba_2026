@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { Employee, PayrollRecord } from '@/types';
-import { Pencil, Mail, Phone, Building2, Calendar } from 'lucide-react';
+import { Pencil, Mail, Phone, Building2, Calendar, X } from 'lucide-react';
 import PayrollTable from '@/components/payroll/PayrollTable';
+import PayrollDetail from '@/components/payroll/PayrollDetail';
 
 interface Props {
   employee: Employee;
@@ -26,7 +27,6 @@ export default function EmployeeDetail({ employee }: Props) {
       .then((d) => {
         if (d.success) {
           setPayrolls(d.data);
-          if (d.data.length > 0) setSelectedPayroll(d.data[0]);
         }
       })
       .finally(() => setLoading(false));
@@ -123,6 +123,27 @@ export default function EmployeeDetail({ employee }: Props) {
         </div>
       </div>
 
+      {/* 明細モーダル */}
+      {selectedPayroll && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200">
+              <h2 className="text-base font-semibold text-gray-800">
+                {employee.name}｜{selectedPayroll.paymentMonth} 給与明細
+              </h2>
+              <button
+                onClick={() => setSelectedPayroll(null)}
+                className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors text-gray-500"
+              >
+                <X size={18} />
+              </button>
+            </div>
+            <div className="p-5">
+              <PayrollDetail employee={employee} record={selectedPayroll} />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
