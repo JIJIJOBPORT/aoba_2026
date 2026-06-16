@@ -45,6 +45,17 @@ export async function POST(request: Request) {
 
     const drive = getDriveClient();
     const buffer = await file.arrayBuffer();
+
+    // ルートフォルダへのアクセス確認
+    try {
+      await drive.files.get({ fileId: ROOT_FOLDER_ID!, fields: 'id' });
+    } catch {
+      return NextResponse.json({
+        success: false,
+        error: `Driveフォルダにアクセスできません（フォルダID: ${ROOT_FOLDER_ID}）。サービスアカウント aoba2026@aoba2026-499509.iam.gserviceaccount.com をフォルダに「編集者」として共有してください。`,
+      }, { status: 500 });
+    }
+
     const stream = Readable.from(Buffer.from(buffer));
 
     // 社員フォルダを取得または作成
