@@ -215,7 +215,7 @@ export default function PaidLeavePage() {
                 {[...usages].sort((a, b) => b.usedDate.localeCompare(a.usedDate)).map(u => (
                   <li key={u.usedDate} className="flex items-center justify-between px-3 py-2 hover:bg-gray-50">
                     <div>
-                      <span className={`text-xs font-medium ${u.usedDate.replace(/\//g, '-') <= today ? 'text-gray-600' : 'text-blue-600'}`}>{u.usedDate}</span>
+                      <span className={`text-xs font-medium ${u.usedDate.replace(/\//g, '-') <= today ? 'text-gray-600' : 'text-[#34675C]'}`}>{u.usedDate}</span>
                       <span className="text-xs text-gray-400 ml-2">{u.usageType}（{u.usedDays}日）{u.note && `・${u.note}`}</span>
                     </div>
                     <button onClick={() => handleDelete(u)} disabled={deletingDate === u.usedDate}

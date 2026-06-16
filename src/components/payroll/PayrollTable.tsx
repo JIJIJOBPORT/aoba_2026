@@ -18,7 +18,7 @@ export default function PayrollTable({ records, selectedId, onSelect, onAddClick
         <h3 className="font-semibold text-gray-700">給与情報</h3>
         <button
           onClick={onAddClick}
-          className="px-3 py-1.5 bg-blue-600 text-white text-xs rounded-lg hover:bg-blue-700 transition-colors"
+          className="px-3 py-1.5 bg-[#34675C] text-white text-xs rounded-lg hover:bg-[#2a5249] transition-colors"
         >
           ＋ 給与情報を追加
         </button>
@@ -47,7 +47,7 @@ export default function PayrollTable({ records, selectedId, onSelect, onAddClick
                   key={rec.id}
                   className={cn(
                     'border-b border-gray-100 hover:bg-gray-50 transition-colors',
-                    selectedId === rec.id && 'bg-blue-50'
+                    selectedId === rec.id && 'bg-[#f0f5f4]'
                   )}
                 >
                   <td className="py-2.5 pr-4 font-medium text-gray-700">
@@ -73,7 +73,7 @@ export default function PayrollTable({ records, selectedId, onSelect, onAddClick
                   <td className="py-2.5 text-center">
                     <button
                       onClick={() => onSelect(rec)}
-                      className="text-xs text-blue-600 hover:text-blue-800 border border-blue-300 px-2 py-0.5 rounded hover:bg-blue-50 transition-colors"
+                      className="text-xs text-[#34675C] hover:text-[#2a5249] border border-[#7DA3A1] px-2 py-0.5 rounded hover:bg-[#f0f5f4] transition-colors"
                     >
                       明細表示
                     </button>

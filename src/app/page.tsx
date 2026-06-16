@@ -7,7 +7,7 @@ export default function Home() {
         <div className="flex gap-4 justify-center">
           <a
             href="/dashboard"
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="px-6 py-3 bg-[#34675C] text-white rounded-lg hover:bg-[#2a5249] transition-colors"
           >
             アプリを開く
           </a>

@@ -40,20 +40,20 @@ export default function EmployeeDetail({ employee }: Props) {
         <div className="bg-white rounded-lg border border-gray-200 p-4 mb-4">
           <div className="flex items-start justify-between mb-4">
             <div className="flex items-center gap-3">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-2xl font-bold">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#34675C] to-[#324851] flex items-center justify-center text-white text-2xl font-bold">
                 {employee.name.charAt(0)}
               </div>
               <div>
                 <div className="flex items-center gap-2">
                   <h2 className="text-xl font-bold text-gray-800">{employee.name}</h2>
-                  <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">
+                  <span className="text-xs bg-[#e8f0ef] text-[#34675C] px-2 py-0.5 rounded-full">
                     {employee.employmentType}
                   </span>
                 </div>
                 <p className="text-xs text-gray-400 mt-0.5">{employee.nameKana}</p>
               </div>
             </div>
-            <button className="flex items-center gap-1 text-xs text-blue-600 border border-blue-300 px-3 py-1.5 rounded-lg hover:bg-blue-50 transition-colors">
+            <button className="flex items-center gap-1 text-xs text-[#34675C] border border-[#7DA3A1] px-3 py-1.5 rounded-lg hover:bg-[#f0f5f4] transition-colors">
               <Pencil size={12} />
               編集
             </button>
@@ -80,7 +80,7 @@ export default function EmployeeDetail({ employee }: Props) {
                 onClick={() => setActiveTab(tab)}
                 className={`py-3 px-4 text-sm font-medium border-b-2 transition-colors ${
                   activeTab === tab
-                    ? 'border-blue-600 text-blue-600'
+                    ? 'border-[#34675C] text-[#34675C]'
                     : 'border-transparent text-gray-500 hover:text-gray-700'
                 }`}
               >

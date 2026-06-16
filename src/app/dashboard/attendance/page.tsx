@@ -10,7 +10,7 @@ import PaidLeaveManager from '@/components/attendance/PaidLeaveManager';
 const CURRENT_MONTH = new Date().toISOString().slice(0, 7);
 
 const CATEGORY_STYLES: Record<string, string> = {
-  通常: 'bg-blue-50 text-blue-700 border-blue-200',
+  通常: 'bg-[#f0f5f4] text-[#34675C] border-[#a8c8c0]',
   有給: 'bg-green-100 text-green-700 border-green-300',
   半休午前: 'bg-teal-100 text-teal-700 border-teal-300',
   半休午後: 'bg-teal-100 text-teal-700 border-teal-300',
@@ -227,10 +227,10 @@ export default function AttendancePage() {
                         isWeekend && 'bg-gray-50/50'
                       )}
                     >
-                      <td className={cn('px-4 py-2 font-medium', rec.weekday === '日' && 'text-red-500', rec.weekday === '土' && 'text-blue-500')}>
+                      <td className={cn('px-4 py-2 font-medium', rec.weekday === '日' && 'text-red-500', rec.weekday === '土' && 'text-[#7DA3A1]')}>
                         {rec.date}
                       </td>
-                      <td className={cn('px-2 py-2 text-center font-medium', rec.weekday === '日' && 'text-red-500', rec.weekday === '土' && 'text-blue-500')}>
+                      <td className={cn('px-2 py-2 text-center font-medium', rec.weekday === '日' && 'text-red-500', rec.weekday === '土' && 'text-[#7DA3A1]')}>
                         {rec.weekday}
                       </td>
                       <td className="px-2 py-2 text-center text-gray-600">
@@ -245,7 +245,7 @@ export default function AttendancePage() {
                             defaultValue={rec.category}
                             onBlur={() => setEditingDate(null)}
                             onChange={(e) => handleCategoryChange(rec, e.target.value as AttendanceRecord['category'])}
-                            className="border border-blue-400 rounded px-2 py-0.5 text-xs focus:outline-none"
+                            className="border border-[#7DA3A1] rounded px-2 py-0.5 text-xs focus:outline-none"
                           >
                             {CATEGORIES.map((c) => (
                               <option key={c} value={c}>{c}</option>

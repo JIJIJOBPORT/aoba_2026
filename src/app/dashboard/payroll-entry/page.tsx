@@ -488,7 +488,7 @@ export default function PayrollEntryPage() {
               </div>
               <button
                 onClick={handleDownloadTemplate}
-                className="text-xs text-[#34675C] underline hover:text-blue-800 mt-4"
+                className="text-xs text-[#34675C] underline hover:text-[#2a5249] mt-4"
               >
                 テンプレートCSVをダウンロード
               </button>
@@ -531,7 +531,7 @@ export default function PayrollEntryPage() {
               </div>
             </div>
             {csvResult && (
-              <p className="mt-2 text-sm text-blue-700 bg-blue-50 rounded px-3 py-2">{csvResult}</p>
+              <p className="mt-2 text-sm text-[#34675C] bg-[#f0f5f4] rounded px-3 py-2">{csvResult}</p>
             )}
           </div>
 

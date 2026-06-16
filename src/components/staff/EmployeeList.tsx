@@ -6,7 +6,7 @@ import { Employee } from '@/types';
 import { cn } from '@/lib/utils';
 
 const EMPLOYMENT_TYPE_COLOR: Record<string, string> = {
-  正社員: 'bg-blue-100 text-blue-700',
+  正社員: 'bg-[#e8f0ef] text-[#34675C]',
   契約社員: 'bg-green-100 text-green-700',
   パート: 'bg-orange-100 text-orange-700',
   アルバイト: 'bg-purple-100 text-purple-700',
@@ -37,7 +37,7 @@ export default function EmployeeList({ employees, selectedId, onSelect, onAddCli
           <h2 className="font-semibold text-gray-800">スタッフ一覧</h2>
           <button
             onClick={onAddClick}
-            className="flex items-center gap-1 px-3 py-1.5 bg-blue-600 text-white text-xs rounded-lg hover:bg-blue-700 transition-colors"
+            className="flex items-center gap-1 px-3 py-1.5 bg-[#34675C] text-white text-xs rounded-lg hover:bg-[#2a5249] transition-colors"
           >
             <UserPlus size={14} />
             スタッフ追加
@@ -51,7 +51,7 @@ export default function EmployeeList({ employees, selectedId, onSelect, onAddCli
             placeholder="名前・社員番号で検索"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="w-full pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#86AC41]"
           />
         </div>
       </div>
@@ -76,11 +76,11 @@ export default function EmployeeList({ employees, selectedId, onSelect, onAddCli
               onClick={() => onSelect(emp)}
               className={cn(
                 'w-full flex items-center gap-3 px-4 py-3 border-b border-gray-100 hover:bg-gray-50 transition-colors text-left',
-                selectedId === emp.id && 'bg-blue-50 border-l-2 border-l-blue-500'
+                selectedId === emp.id && 'bg-[#f0f5f4] border-l-2 border-l-[#86AC41]'
               )}
             >
               {/* アバター */}
-              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#34675C] to-[#324851] flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
                 {emp.name.charAt(0)}
               </div>
               <div className="min-w-0 flex-1">

@@ -117,7 +117,7 @@ export default function PayrollListPage() {
                 <tr key={rec.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
                   <td className="px-4 py-3 font-medium text-gray-700">{rec.paymentMonth}</td>
                   <td className="px-3 py-3 text-center">
-                    <span className={`text-xs px-2 py-0.5 rounded-full ${rec.recordType === '賞与' ? 'bg-yellow-100 text-yellow-700' : 'bg-blue-100 text-blue-700'}`}>
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${rec.recordType === '賞与' ? 'bg-yellow-100 text-yellow-700' : 'bg-[#e8f0ef] text-[#34675C]'}`}>
                       {rec.recordType}
                     </span>
                   </td>
@@ -149,7 +149,7 @@ export default function PayrollListPage() {
                 <td className="px-3 py-2 text-right text-red-500">
                   {filtered.reduce((s, r) => s + r.totalDeductions, 0).toLocaleString()}
                 </td>
-                <td className="px-4 py-2 text-right text-blue-700">
+                <td className="px-4 py-2 text-right text-[#34675C]">
                   {filtered.reduce((s, r) => s + r.netPay, 0).toLocaleString()}
                 </td>
                 <td />

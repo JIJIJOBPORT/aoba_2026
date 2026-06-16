@@ -132,7 +132,7 @@ export default function PaidLeaveManager({ employeeId, employeeName, onSaved }: 
               type="date"
               value={form.usedDate}
               onChange={(e) => setForm((f) => ({ ...f, usedDate: e.target.value }))}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#86AC41]"
             />
           </div>
           <div>
@@ -140,7 +140,7 @@ export default function PaidLeaveManager({ employeeId, employeeName, onSaved }: 
             <select
               value={form.usageType}
               onChange={(e) => setForm((f) => ({ ...f, usageType: e.target.value as typeof USAGE_TYPES[number] }))}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#86AC41]"
             >
               {USAGE_TYPES.map((t) => <option key={t} value={t}>{t}（{USAGE_TYPE_DAYS[t]}日）</option>)}
             </select>
@@ -153,7 +153,7 @@ export default function PaidLeaveManager({ employeeId, employeeName, onSaved }: 
             value={form.note}
             onChange={(e) => setForm((f) => ({ ...f, note: e.target.value }))}
             placeholder="例：私用、通院など"
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#86AC41]"
           />
         </div>
         <button
@@ -172,10 +172,10 @@ export default function PaidLeaveManager({ employeeId, employeeName, onSaved }: 
 
       {/* 予定（未来の有給） */}
       {future.length > 0 && (
-        <div className="bg-white border border-blue-200 rounded-lg overflow-hidden">
-          <div className="bg-blue-50 px-4 py-2 flex items-center gap-2 border-b border-blue-200">
-            <CalendarCheck size={14} className="text-blue-600" />
-            <h3 className="text-sm font-semibold text-blue-700">取得予定（{future.length}件）</h3>
+        <div className="bg-white border border-[#a8c8c0] rounded-lg overflow-hidden">
+          <div className="bg-[#f0f5f4] px-4 py-2 flex items-center gap-2 border-b border-[#a8c8c0]">
+            <CalendarCheck size={14} className="text-[#34675C]" />
+            <h3 className="text-sm font-semibold text-[#34675C]">取得予定（{future.length}件）</h3>
           </div>
           <ul className="divide-y divide-gray-100">
             {future.map((u) => (
@@ -217,7 +217,7 @@ function UsageRow({ usage, onDelete, deletingDate, isPast }: {
   return (
     <li className="flex items-center justify-between px-4 py-2.5 hover:bg-gray-50">
       <div className="flex items-center gap-3">
-        <div className={`w-2 h-2 rounded-full ${isPast ? 'bg-gray-400' : 'bg-blue-500'}`} />
+        <div className={`w-2 h-2 rounded-full ${isPast ? 'bg-gray-400' : 'bg-[#86AC41]'}`} />
         <div>
           <p className="text-sm font-medium text-gray-700">{usage.usedDate}</p>
           <p className="text-xs text-gray-400">

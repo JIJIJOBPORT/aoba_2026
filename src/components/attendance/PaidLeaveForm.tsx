@@ -86,7 +86,7 @@ export default function PaidLeaveForm({ employeeId, employeeName, leaveRecords, 
             type="date"
             value={form.usedDate}
             onChange={(e) => setForm((f) => ({ ...f, usedDate: e.target.value }))}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#86AC41]"
           />
         </div>
         <div>
@@ -94,7 +94,7 @@ export default function PaidLeaveForm({ employeeId, employeeName, leaveRecords, 
           <select
             value={form.usageType}
             onChange={(e) => setForm((f) => ({ ...f, usageType: e.target.value as typeof USAGE_TYPES[number] }))}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#86AC41]"
           >
             {USAGE_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
           </select>
@@ -108,7 +108,7 @@ export default function PaidLeaveForm({ employeeId, employeeName, leaveRecords, 
           value={form.note}
           onChange={(e) => setForm((f) => ({ ...f, note: e.target.value }))}
           placeholder="任意"
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#86AC41]"
         />
       </div>
 
