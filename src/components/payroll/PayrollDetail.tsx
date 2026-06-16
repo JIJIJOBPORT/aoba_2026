@@ -18,11 +18,14 @@ export default function PayrollDetail({ employee, record, companyName = 'あお�
     setExporting(true);
     try {
       const blob = await generatePayrollPdf('payroll-print-area');
-      const filename = `給与明細_${employee.name}_${record.paymentMonth}.pdf`;
+      const [year, month] = record.paymentMonth.split('-');
+      const monthLabel = `${year}年${parseInt(month)}月`;
+      const filename = `${monthLabel}${employee.name}_給与明細.pdf`;
       downloadPdf(blob, filename);
       const formData = new FormData();
       formData.append('file', blob, filename);
       formData.append('filename', filename);
+      formData.append('employeeName', employee.name);
       await fetch('/api/pdf', { method: 'POST', body: formData });
     } finally {
       setExporting(false);
