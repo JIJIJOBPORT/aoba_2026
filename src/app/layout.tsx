@@ -23,8 +23,7 @@ export default function RootLayout({
     <html
       lang="ja"
       className={`${notoSansJP.variable} h-full antialiased`}
-      style={{ fontFamily: 'var(--font-noto-sans-jp), sans-serif' }}
-      style={{ colorScheme: 'light' }}
+      style={{ fontFamily: 'var(--font-noto-sans-jp), sans-serif', colorScheme: 'light' }}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
