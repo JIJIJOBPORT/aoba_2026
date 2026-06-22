@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Employee } from '@/types';
 import { PaidLeaveRecord, PaidLeaveUsage } from '@/types';
-import { Gift, CalendarPlus, Trash2 } from 'lucide-react';
+import { CalendarPlus, Trash2 } from 'lucide-react';
 
 // APIが返す計算済み残高（FIFO消化＋2年失効）
 interface GrantBalance {
@@ -37,17 +37,6 @@ export default function PaidLeavePage() {
   const [balance, setBalance] = useState<PaidLeaveBalance | null>(null);
   const [hireDate, setHireDate] = useState<string | null>(null);
 
-  // 付与フォーム
-  const thisYear = new Date().getFullYear().toString();
-  const [grantForm, setGrantForm] = useState({
-    fiscalYear: thisYear,
-    grantDate: '',
-    grantDays: '',
-    carryoverDays: '0',
-    expiryDate: '',
-  });
-  const [grantSaving, setGrantSaving] = useState(false);
-
   // 取得フォーム
   const [usageForm, setUsageForm] = useState({ usedDate: '', usageType: '全日' as typeof USAGE_TYPES[number], note: '' });
   const [usageSaving, setUsageSaving] = useState(false);
@@ -74,22 +63,6 @@ export default function PaidLeavePage() {
   }, [selectedId]);
 
   useEffect(() => { load(); }, [load]);
-
-  const handleGrant = async () => {
-    if (!grantForm.grantDate || !grantForm.grantDays) {
-      setMessage({ type: 'error', text: '付与日と付与日数は必須です' }); return;
-    }
-    setGrantSaving(true); setMessage(null);
-    const res = await fetch('/api/paid-leave/grant', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ employeeId: selectedId, ...grantForm, grantDays: Number(grantForm.grantDays), carryoverDays: Number(grantForm.carryoverDays) }),
-    });
-    const d = await res.json();
-    setGrantSaving(false);
-    setMessage({ type: d.success ? 'success' : 'error', text: d.message ?? d.error });
-    if (d.success) { setGrantForm({ fiscalYear: thisYear, grantDate: '', grantDays: '', carryoverDays: '0', expiryDate: '' }); await load(); }
-  };
 
   const handleUsage = async () => {
     if (!usageForm.usedDate) { setMessage({ type: 'error', text: '取得日を入力してください' }); return; }
@@ -200,50 +173,12 @@ export default function PaidLeavePage() {
         </div>
       ) : null}
 
-      <div className="grid grid-cols-2 gap-5">
-        {/* 付与登録 */}
-        <div className="bg-white rounded-lg border border-gray-200 p-5">
-          <h2 className="font-semibold text-gray-700 mb-4 flex items-center gap-2"><Gift size={15} />有給付与を登録</h2>
-          <div className="space-y-3">
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-xs text-gray-500 mb-1">年度</label>
-                <input type="text" value={grantForm.fiscalYear} onChange={e => setGrantForm(f => ({ ...f, fiscalYear: e.target.value }))}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#86AC41]" />
-              </div>
-              <div>
-                <label className="block text-xs text-gray-500 mb-1">付与日</label>
-                <input type="date" value={grantForm.grantDate} onChange={e => setGrantForm(f => ({ ...f, grantDate: e.target.value }))}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#86AC41]" />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-xs text-gray-500 mb-1">付与日数</label>
-                <input type="number" value={grantForm.grantDays} onChange={e => setGrantForm(f => ({ ...f, grantDays: e.target.value }))}
-                  placeholder="例: 10" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#86AC41]" />
-              </div>
-              <div>
-                <label className="block text-xs text-gray-500 mb-1">繰越日数</label>
-                <input type="number" value={grantForm.carryoverDays} onChange={e => setGrantForm(f => ({ ...f, carryoverDays: e.target.value }))}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#86AC41]" />
-              </div>
-            </div>
-            <div>
-              <label className="block text-xs text-gray-500 mb-1">有効期限</label>
-              <input type="date" value={grantForm.expiryDate} onChange={e => setGrantForm(f => ({ ...f, expiryDate: e.target.value }))}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#86AC41]" />
-            </div>
-          </div>
-          <button onClick={handleGrant} disabled={grantSaving || !selectedId}
-            className="mt-4 w-full py-2.5 text-white text-sm rounded-lg disabled:opacity-50 transition-colors"
-            style={{ backgroundColor: '#34675C' }}>
-            {grantSaving ? '登録中...' : '付与を登録'}
-          </button>
-        </div>
-
+      <div className="max-w-xl">
         {/* 取得登録 */}
         <div className="bg-white rounded-lg border border-gray-200 p-5">
+          <p className="text-xs text-gray-400 mb-3">
+            有給の付与は入社日から自動計算されます。ここでは取得（消化）のみ登録してください。
+          </p>
           <h2 className="font-semibold text-gray-700 mb-4 flex items-center gap-2"><CalendarPlus size={15} />有給取得を登録</h2>
           <div className="space-y-3">
             <div>
