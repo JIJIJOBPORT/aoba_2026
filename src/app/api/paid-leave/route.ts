@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server';
 import { getPaidLeaveByEmployee, getPaidLeaveUsageByEmployee, addPaidLeaveUsage } from '@/lib/paid-leave';
 import { getAttendanceRecords, generateMonthlyAttendance, updateAttendanceCategory } from '@/lib/attendance';
+import { getEmployeeById } from '@/lib/employees';
+import { calcFromHireDate } from '@/lib/paid-leave-calc';
 
-// 有給情報取得
+// 有給情報取得（入社日から法定付与・FIFO消化・2年失効を自動計算）
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const employeeId = searchParams.get('employeeId');
@@ -10,11 +12,24 @@ export async function GET(request: Request) {
     return NextResponse.json({ success: false, error: 'employeeId が必要です' }, { status: 400 });
   }
   try {
-    const [records, usages] = await Promise.all([
+    const [records, usages, employee] = await Promise.all([
       getPaidLeaveByEmployee(employeeId),
       getPaidLeaveUsageByEmployee(employeeId),
+      getEmployeeById(employeeId),
     ]);
-    return NextResponse.json({ success: true, records, usages });
+
+    // 入社日があれば法定計算で残高を算出
+    const balance = employee?.hireDate
+      ? calcFromHireDate(employee.hireDate, usages)
+      : null;
+
+    return NextResponse.json({
+      success: true,
+      records,
+      usages,
+      balance,
+      hireDate: employee?.hireDate ?? null,
+    });
   } catch (err: unknown) {
     return NextResponse.json({ success: false, error: String(err) }, { status: 500 });
   }

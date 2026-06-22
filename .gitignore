@@ -39,6 +39,12 @@ service-account.json
 # vercel
 .vercel
 
+# 別プロジェクト（独立したリポジトリ・物理的にネストしているだけ）
+/habitlog
+/moneylog
+/monolog
+desktop.ini
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

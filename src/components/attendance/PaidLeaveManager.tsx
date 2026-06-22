@@ -4,6 +4,28 @@ import { useState, useEffect, useCallback } from 'react';
 import { PaidLeaveRecord, PaidLeaveUsage } from '@/types';
 import { CalendarPlus, Trash2, CalendarCheck } from 'lucide-react';
 
+// APIが返す計算済み残高
+interface GrantBalance {
+  grantIndex: number;
+  grantDate: string;
+  expiryDate: string;
+  grantDays: number;
+  fiscalYear: string;
+  usedDays: number;
+  expiredDays: number;
+  remainingDays: number;
+  isExpired: boolean;
+}
+interface PaidLeaveBalance {
+  grants: GrantBalance[];
+  totalRemaining: number;
+  totalGranted: number;
+  totalUsed: number;
+  totalExpired: number;
+  nextGrantDate: string | null;
+  nextGrantDays: number | null;
+}
+
 interface Props {
   employeeId: string;
   employeeName: string;
@@ -22,6 +44,8 @@ const USAGE_TYPE_DAYS: Record<string, number> = {
 export default function PaidLeaveManager({ employeeId, employeeName, onSaved }: Props) {
   const [leaveRecords, setLeaveRecords] = useState<PaidLeaveRecord[]>([]);
   const [usages, setUsages] = useState<PaidLeaveUsage[]>([]);
+  const [balance, setBalance] = useState<PaidLeaveBalance | null>(null);
+  const [hireDate, setHireDate] = useState<string | null>(null);
   const [form, setForm] = useState({ usedDate: '', usageType: '全日' as typeof USAGE_TYPES[number], note: '' });
   const [saving, setSaving] = useState(false);
   const [deletingDate, setDeletingDate] = useState<string | null>(null);
@@ -34,6 +58,8 @@ export default function PaidLeaveManager({ employeeId, employeeName, onSaved }: 
       if (d.success) {
         setLeaveRecords(d.records);
         setUsages(d.usages);
+        setBalance(d.balance ?? null);
+        setHireDate(d.hireDate ?? null);
       }
     } catch {
       // fetch失敗時は無視して空のまま表示
@@ -42,6 +68,7 @@ export default function PaidLeaveManager({ employeeId, employeeName, onSaved }: 
 
   useEffect(() => { load(); }, [load]);
 
+  // 旧シート方式のフォールバック（入社日が未登録で計算できない場合）
   const activeRecord = leaveRecords.find((r) => r.remainingDays > 0);
 
   const handleAdd = async () => {
@@ -104,20 +131,61 @@ export default function PaidLeaveManager({ employeeId, employeeName, onSaved }: 
 
   return (
     <div className="space-y-4">
-      {/* 残日数サマリー */}
-      {activeRecord && (
+      {/* 残日数サマリー（法定計算ベース） */}
+      {balance ? (
         <div className="bg-green-50 border border-green-200 rounded-lg px-4 py-3">
           <p className="text-xs text-green-600 mb-1">{employeeName} の有給残日数</p>
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-bold text-green-700">{activeRecord.remainingDays}</span>
+            <span className="text-2xl font-bold text-green-700">{balance.totalRemaining}</span>
             <span className="text-sm text-green-600">日</span>
             <span className="text-xs text-gray-500 ml-2">
-              付与 {activeRecord.grantDays}日 ＋ 繰越 {activeRecord.carryoverDays}日 − 使用 {activeRecord.usedDays}日
+              累計付与 {balance.totalGranted}日 − 使用 {balance.totalUsed}日 − 失効 {balance.totalExpired}日
             </span>
           </div>
-          <p className="text-xs text-gray-400 mt-1">有効期限: {activeRecord.expiryDate}</p>
+          {balance.nextGrantDate && (
+            <p className="text-xs text-gray-400 mt-1">
+              次回付与: {balance.nextGrantDate}（+{balance.nextGrantDays}日）
+            </p>
+          )}
+
+          {/* 付与年度別の内訳 */}
+          {balance.grants.length > 0 && (
+            <div className="mt-3 border-t border-green-200 pt-2">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="text-gray-400">
+                    <th className="text-left font-normal pb-1">付与日</th>
+                    <th className="text-right font-normal pb-1">付与</th>
+                    <th className="text-right font-normal pb-1">使用</th>
+                    <th className="text-right font-normal pb-1">失効</th>
+                    <th className="text-right font-normal pb-1">残</th>
+                    <th className="text-right font-normal pb-1">期限</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {balance.grants.map((g) => (
+                    <tr key={g.grantDate} className={g.isExpired ? 'text-gray-300' : 'text-gray-600'}>
+                      <td className="text-left py-0.5">{g.grantDate}</td>
+                      <td className="text-right">{g.grantDays}</td>
+                      <td className="text-right">{g.usedDays}</td>
+                      <td className="text-right">{g.expiredDays > 0 ? <span className="text-red-400">{g.expiredDays}</span> : '−'}</td>
+                      <td className="text-right font-semibold">{g.remainingDays}</td>
+                      <td className="text-right">{g.expiryDate}{g.isExpired && '（失効）'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
-      )}
+      ) : !hireDate ? (
+        <div className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 text-xs text-amber-700">
+          {employeeName} の入社日が未登録のため、有給を自動計算できません。社員マスタに入社日を登録してください。
+          {activeRecord && (
+            <p className="mt-1 text-gray-500">（暫定表示）残 {activeRecord.remainingDays}日</p>
+          )}
+        </div>
+      ) : null}
 
       {/* 入力フォーム */}
       <div className="bg-white border border-gray-200 rounded-lg p-4">
