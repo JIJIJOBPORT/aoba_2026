@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { PaidLeaveRecord, PaidLeaveUsage } from '@/types';
-import { CalendarPlus, Trash2, CalendarCheck } from 'lucide-react';
+import { CalendarPlus, Trash2, CalendarCheck, RefreshCw } from 'lucide-react';
 
 // APIが返す計算済み残高
 interface GrantBalance {
@@ -50,6 +50,8 @@ export default function PaidLeaveManager({ employeeId, employeeName, onSaved }: 
   const [saving, setSaving] = useState(false);
   const [deletingDate, setDeletingDate] = useState<string | null>(null);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [recalculating, setRecalculating] = useState(false);
+  const [lastCalcTime, setLastCalcTime] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     try {
@@ -67,6 +69,21 @@ export default function PaidLeaveManager({ employeeId, employeeName, onSaved }: 
   }, [employeeId]);
 
   useEffect(() => { load(); }, [load]);
+
+  // スプレッドシートから再読み込みして残高を再計算
+  const handleRecalculate = async () => {
+    setRecalculating(true);
+    setMessage(null);
+    try {
+      await load();
+      setLastCalcTime(new Date().toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
+      setMessage({ type: 'success', text: 'スプレッドシートから再計算しました' });
+    } catch {
+      setMessage({ type: 'error', text: '再計算に失敗しました' });
+    } finally {
+      setRecalculating(false);
+    }
+  };
 
   // 旧シート方式のフォールバック（入社日が未登録で計算できない場合）
   const activeRecord = leaveRecords.find((r) => r.remainingDays > 0);
@@ -131,6 +148,21 @@ export default function PaidLeaveManager({ employeeId, employeeName, onSaved }: 
 
   return (
     <div className="space-y-4">
+      {/* 再計算ボタン */}
+      <div className="flex items-center justify-between">
+        <p className="text-xs text-gray-400">
+          {lastCalcTime ? `最終計算: ${lastCalcTime}` : 'スプレッドシートの内容から自動計算しています'}
+        </p>
+        <button
+          onClick={handleRecalculate}
+          disabled={recalculating}
+          className="flex items-center gap-1.5 text-xs px-3 py-1.5 bg-[#34675C] text-white rounded-lg hover:bg-[#2a5249] disabled:opacity-50 transition-colors"
+        >
+          <RefreshCw size={13} className={recalculating ? 'animate-spin' : ''} />
+          {recalculating ? '再計算中...' : 'スプレッドシートから再計算'}
+        </button>
+      </div>
+
       {/* 残日数サマリー（法定計算ベース） */}
       {balance ? (
         <div className="bg-green-50 border border-green-200 rounded-lg px-4 py-3">
