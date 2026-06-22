@@ -5,6 +5,27 @@ import { Employee } from '@/types';
 import { PaidLeaveRecord, PaidLeaveUsage } from '@/types';
 import { Gift, CalendarPlus, Trash2 } from 'lucide-react';
 
+// APIが返す計算済み残高（FIFO消化＋2年失効）
+interface GrantBalance {
+  grantDate: string;
+  expiryDate: string;
+  grantDays: number;
+  fiscalYear: string;
+  usedDays: number;
+  expiredDays: number;
+  remainingDays: number;
+  isExpired: boolean;
+}
+interface PaidLeaveBalance {
+  grants: GrantBalance[];
+  totalRemaining: number;
+  totalGranted: number;
+  totalUsed: number;
+  totalExpired: number;
+  nextGrantDate: string | null;
+  nextGrantDays: number | null;
+}
+
 const USAGE_TYPES = ['全日', '半日午前', '半日午後', '時間単位'] as const;
 const USAGE_TYPE_DAYS: Record<string, number> = { 全日: 1, 半日午前: 0.5, 半日午後: 0.5, 時間単位: 0.125 };
 
@@ -13,6 +34,8 @@ export default function PaidLeavePage() {
   const [selectedId, setSelectedId] = useState('');
   const [records, setRecords] = useState<PaidLeaveRecord[]>([]);
   const [usages, setUsages] = useState<PaidLeaveUsage[]>([]);
+  const [balance, setBalance] = useState<PaidLeaveBalance | null>(null);
+  const [hireDate, setHireDate] = useState<string | null>(null);
 
   // 付与フォーム
   const thisYear = new Date().getFullYear().toString();
@@ -42,7 +65,12 @@ export default function PaidLeavePage() {
     if (!selectedId) return;
     const res = await fetch(`/api/paid-leave?employeeId=${selectedId}`);
     const d = await res.json();
-    if (d.success) { setRecords(d.records); setUsages(d.usages); }
+    if (d.success) {
+      setRecords(d.records);
+      setUsages(d.usages);
+      setBalance(d.balance ?? null);
+      setHireDate(d.hireDate ?? null);
+    }
   }, [selectedId]);
 
   useEffect(() => { load(); }, [load]);
@@ -115,26 +143,62 @@ export default function PaidLeavePage() {
         )}
       </div>
 
-      {/* 残日数サマリー */}
-      {records.length > 0 && (
-        <div className="grid grid-cols-3 gap-4 mb-5">
-          {records.slice(0, 3).map(r => (
-            <div key={r.fiscalYear} className={`rounded-lg border p-4 ${r === activeRecord ? 'border-[#34675C] bg-[#f0f7f5]' : 'border-gray-200 bg-white opacity-70'}`}>
-              <p className="text-xs text-gray-500 mb-1">{r.fiscalYear}年度</p>
-              <div className="flex items-baseline gap-1 mb-2">
-                <span className="text-3xl font-bold" style={{ color: '#34675C' }}>{r.remainingDays}</span>
-                <span className="text-sm text-gray-500">日残</span>
+      {/* 残日数サマリー（FIFO消化＋2年失効を反映した有効残） */}
+      {balance ? (
+        <div className="rounded-lg border border-[#34675C] bg-[#f0f7f5] p-5 mb-5">
+          <div className="flex items-start justify-between flex-wrap gap-4">
+            {/* メインの残日数 */}
+            <div>
+              <p className="text-xs text-gray-500 mb-1">現在の有効な有給残（失効分を除く）</p>
+              <div className="flex items-baseline gap-1">
+                <span className="text-4xl font-bold" style={{ color: '#34675C' }}>{balance.totalRemaining}</span>
+                <span className="text-sm text-gray-500">日</span>
               </div>
-              <div className="text-xs text-gray-400 space-y-0.5">
-                <div className="flex justify-between"><span>付与</span><span>{r.grantDays}日</span></div>
-                <div className="flex justify-between"><span>繰越</span><span>{r.carryoverDays}日</span></div>
-                <div className="flex justify-between"><span>取得</span><span>{r.usedDays}日</span></div>
-                <div className="flex justify-between font-medium text-gray-500"><span>期限</span><span>{r.expiryDate}</span></div>
+              <div className="text-xs text-gray-500 mt-2 space-y-0.5">
+                <div>累計付与 {balance.totalGranted}日 − 使用 {balance.totalUsed}日 − 失効 {balance.totalExpired}日</div>
+                {balance.nextGrantDate && (
+                  <div className="text-gray-400">次回付与: {balance.nextGrantDate}（+{balance.nextGrantDays}日）</div>
+                )}
               </div>
             </div>
-          ))}
+
+            {/* 付与年度別の内訳 */}
+            {balance.grants.length > 0 && (
+              <div className="flex-1 min-w-[280px]">
+                <table className="w-full text-xs">
+                  <thead>
+                    <tr className="text-gray-400 border-b border-gray-200">
+                      <th className="text-left font-normal pb-1">付与日</th>
+                      <th className="text-right font-normal pb-1">付与</th>
+                      <th className="text-right font-normal pb-1">使用</th>
+                      <th className="text-right font-normal pb-1">失効</th>
+                      <th className="text-right font-normal pb-1">残</th>
+                      <th className="text-right font-normal pb-1">期限</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {balance.grants.filter(g => !g.isExpired || g.usedDays > 0 || g.expiredDays > 0).slice(-4).map(g => (
+                      <tr key={g.grantDate} className={g.isExpired ? 'text-gray-300' : 'text-gray-600'}>
+                        <td className="text-left py-0.5">{g.grantDate}</td>
+                        <td className="text-right">{g.grantDays}</td>
+                        <td className="text-right">{g.usedDays}</td>
+                        <td className="text-right">{g.expiredDays > 0 ? <span className="text-red-400">{g.expiredDays}</span> : '−'}</td>
+                        <td className="text-right font-semibold">{g.remainingDays}</td>
+                        <td className="text-right">{g.expiryDate}{g.isExpired && '（失効）'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
         </div>
-      )}
+      ) : !hireDate ? (
+        <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 mb-5 text-xs text-amber-700">
+          {employees.find(e => e.id === selectedId)?.name ?? 'この社員'} の入社日が社員マスタに未登録のため、有給を自動計算できません。入社日を登録してください。
+          {activeRecord && <span className="ml-2 text-gray-500">（暫定）残 {activeRecord.remainingDays}日</span>}
+        </div>
+      ) : null}
 
       <div className="grid grid-cols-2 gap-5">
         {/* 付与登録 */}
