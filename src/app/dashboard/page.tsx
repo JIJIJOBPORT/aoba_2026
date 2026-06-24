@@ -1,13 +1,17 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { ArrowLeft } from 'lucide-react';
 import { Employee } from '@/types';
+import { cn } from '@/lib/utils';
 import EmployeeList from '@/components/staff/EmployeeList';
 import EmployeeDetail from '@/components/staff/EmployeeDetail';
 
 export default function DashboardPage() {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [selected, setSelected] = useState<Employee | null>(null);
+  // スマホ用: 一覧 / 詳細 の切り替え（lg以上では常に両方表示）
+  const [mobileView, setMobileView] = useState<'list' | 'detail'>('list');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -46,19 +50,30 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="flex h-screen">
-      {/* 中央：スタッフリスト */}
-      <EmployeeList
-        employees={employees}
-        selectedId={selected?.id ?? null}
-        onSelect={setSelected}
-        onAddClick={() => {}}
-      />
+    <div className="flex flex-col lg:flex-row lg:h-screen">
+      {/* 中央：スタッフリスト（スマホでは詳細表示中は隠す） */}
+      <div className={cn('lg:block', mobileView === 'detail' && 'hidden')}>
+        <EmployeeList
+          employees={employees}
+          selectedId={selected?.id ?? null}
+          onSelect={(emp) => { setSelected(emp); setMobileView('detail'); }}
+          onAddClick={() => {}}
+        />
+      </div>
 
-      {/* 右：スタッフ詳細 */}
-      <div className="flex-1 overflow-auto p-4">
+      {/* 右：スタッフ詳細（スマホでは一覧表示中は隠す） */}
+      <div className={cn('flex-1 min-w-0 overflow-auto p-4', mobileView === 'list' && 'hidden lg:block')}>
         {selected ? (
-          <EmployeeDetail employee={selected} />
+          <>
+            <button
+              onClick={() => setMobileView('list')}
+              className="lg:hidden flex items-center gap-1 mb-3 text-sm text-[#34675C] font-medium"
+            >
+              <ArrowLeft size={16} />
+              スタッフ一覧へ戻る
+            </button>
+            <EmployeeDetail employee={selected} />
+          </>
         ) : (
           <div className="flex items-center justify-center h-full text-gray-400 text-sm">
             スタッフを選択してください

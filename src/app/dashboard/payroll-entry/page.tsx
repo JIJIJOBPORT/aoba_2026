@@ -316,10 +316,10 @@ function PayrollEntryInner() {
   });
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
+    <div className="p-4 sm:p-6 max-w-5xl mx-auto">
       <h1 className="text-xl font-bold text-gray-800 mb-6">給与情報登録</h1>
 
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* 左：入力フォーム */}
         <div className="bg-white rounded-lg border border-gray-200 p-5">
           <h2 className="font-semibold text-gray-700 mb-4">支給情報入力</h2>
@@ -342,7 +342,7 @@ function PayrollEntryInner() {
           </div>
 
           {/* 勤務月・支払日 */}
-          <div className="grid grid-cols-2 gap-3 mb-4">
+          <div className="grid grid-cols-2 gap-3 mb-4 items-end">
             <div>
               <label className="block text-xs text-gray-500 mb-1">
                 勤務月

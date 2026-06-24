@@ -107,7 +107,7 @@ export default function ResidentTaxPage() {
     .sort((a, b) => a.yearMonth.localeCompare(b.yearMonth));
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="p-4 sm:p-6 max-w-4xl mx-auto">
       <h1 className="text-xl font-bold text-gray-800 mb-6">住民税管理</h1>
 
       {/* 社員・年度選択 */}
@@ -136,7 +136,7 @@ export default function ResidentTaxPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {/* 一括登録フォーム */}
         <div className="bg-white rounded-lg border border-gray-200 p-5">
           <h2 className="font-semibold text-gray-700 mb-4">1年分一括登録</h2>
@@ -177,7 +177,7 @@ export default function ResidentTaxPage() {
         </div>
 
         {/* 支払状況管理 */}
-        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+        <div className="bg-white rounded-lg border border-gray-200 overflow-x-auto">
           <div className="px-5 py-3 border-b border-gray-200">
             <h2 className="font-semibold text-gray-700">支払状況</h2>
           </div>

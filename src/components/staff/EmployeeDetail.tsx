@@ -75,12 +75,12 @@ export default function EmployeeDetail({ employee }: Props) {
 
         {/* タブ */}
         <div className="bg-white rounded-lg border border-gray-200">
-          <div className="flex border-b border-gray-200 px-4">
+          <div className="flex border-b border-gray-200 px-4 overflow-x-auto">
             {TABS.map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`py-3 px-4 text-sm font-medium border-b-2 transition-colors ${
+                className={`py-3 px-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
                   activeTab === tab
                     ? 'border-[#34675C] text-[#34675C]'
                     : 'border-transparent text-gray-500 hover:text-gray-700'
@@ -140,7 +140,7 @@ export default function EmployeeDetail({ employee }: Props) {
                 <X size={18} />
               </button>
             </div>
-            <div className="p-5">
+            <div className="p-3 sm:p-5 overflow-x-auto">
               <PayrollDetail employee={employee} record={selectedPayroll} />
             </div>
           </div>

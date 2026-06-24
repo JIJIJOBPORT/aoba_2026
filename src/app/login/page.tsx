@@ -31,8 +31,8 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#324851' }}>
-      <div className="bg-white rounded-2xl shadow-2xl p-10 w-full max-w-sm">
+    <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: '#324851' }}>
+      <div className="bg-white rounded-2xl shadow-2xl p-8 sm:p-10 w-full max-w-sm">
         {/* ロゴ */}
         <div className="flex flex-col items-center mb-8">
           <div className="w-14 h-14 rounded-full flex items-center justify-center mb-3" style={{ backgroundColor: '#86AC41' }}>

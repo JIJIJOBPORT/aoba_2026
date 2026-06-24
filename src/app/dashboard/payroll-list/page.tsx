@@ -61,7 +61,7 @@ export default function PayrollListPage() {
   });
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
       <h1 className="text-xl font-bold text-gray-800 mb-6">給与明細一覧</h1>
 
       {/* フィルター */}
@@ -114,7 +114,7 @@ export default function PayrollListPage() {
       </div>
 
       {/* 一覧テーブル */}
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-lg border border-gray-200 overflow-x-auto">
         {loading ? (
           <div className="flex items-center justify-center h-40 text-gray-400 text-sm">読み込み中...</div>
         ) : !selectedEmployee ? (
@@ -122,7 +122,7 @@ export default function PayrollListPage() {
         ) : filtered.length === 0 ? (
           <div className="flex items-center justify-center h-40 text-gray-400 text-sm">データがありません</div>
         ) : (
-          <table className="w-full text-sm">
+          <table className="w-full min-w-[640px] text-sm">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200 text-xs text-gray-500">
                 <th className="text-left px-4 py-3">支給月</th>
@@ -240,7 +240,7 @@ export default function PayrollListPage() {
                   </div>
                 )}
               </div>
-              <div className="grid grid-cols-5 gap-2 text-xs">
+              <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 text-xs">
                 {[
                   { label: '出勤日数', key: 'workDays' as const },
                   { label: '有給日数', key: 'paidLeaveDays' as const },
@@ -260,7 +260,7 @@ export default function PayrollListPage() {
                 ))}
               </div>
             </div>
-            <div className="p-5">
+            <div className="p-3 sm:p-5 overflow-x-auto">
               <PayrollDetail employee={selectedEmployee} record={modalRecord} />
             </div>
           </div>

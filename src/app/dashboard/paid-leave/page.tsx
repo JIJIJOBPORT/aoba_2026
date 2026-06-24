@@ -96,7 +96,7 @@ export default function PaidLeavePage() {
   const today = new Date().toISOString().slice(0, 10);
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
+    <div className="p-4 sm:p-6 max-w-5xl mx-auto">
       <h1 className="text-xl font-bold text-gray-800 mb-6">有給管理</h1>
 
       {/* 社員選択 */}
@@ -137,8 +137,8 @@ export default function PaidLeavePage() {
 
             {/* 付与年度別の内訳 */}
             {balance.grants.length > 0 && (
-              <div className="flex-1 min-w-[280px]">
-                <table className="w-full text-xs">
+              <div className="flex-1 min-w-full sm:min-w-[280px] overflow-x-auto">
+                <table className="w-full min-w-[280px] text-xs">
                   <thead>
                     <tr className="text-gray-400 border-b border-gray-200">
                       <th className="text-left font-normal pb-1">付与日</th>

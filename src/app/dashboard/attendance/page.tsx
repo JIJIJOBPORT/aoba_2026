@@ -145,7 +145,7 @@ export default function AttendancePage() {
   const selectedEmployee = employees.find((e) => e.id === selectedId);
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
       <h1 className="text-xl font-bold text-gray-800 mb-6">勤怠入力</h1>
 
       {/* 操作バー */}
@@ -194,9 +194,9 @@ export default function AttendancePage() {
         )}
       </div>
 
-      <div className="flex gap-4">
+      <div className="flex flex-col lg:flex-row gap-4">
         {/* カレンダー */}
-        <div className="flex-1 bg-white rounded-lg border border-gray-200 overflow-hidden">
+        <div className="flex-1 min-w-0 bg-white rounded-lg border border-gray-200 overflow-x-auto">
           {loading ? (
             <div className="flex items-center justify-center h-64 text-gray-400 text-sm">読み込み中...</div>
           ) : records.length === 0 ? (
@@ -205,7 +205,7 @@ export default function AttendancePage() {
               <p className="text-xs">「カレンダー生成」ボタンで自動作成できます</p>
             </div>
           ) : (
-            <table className="w-full text-sm">
+            <table className="w-full min-w-[480px] text-sm">
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-200 text-xs text-gray-500">
                   <th className="text-left px-4 py-2">日付</th>
@@ -277,7 +277,7 @@ export default function AttendancePage() {
 
         {/* 右パネル：月次サマリー＋有給管理 */}
         {(summary || selectedId) && (
-          <div className="w-72 flex-shrink-0 space-y-3 overflow-y-auto">
+          <div className="w-full lg:w-72 flex-shrink-0 space-y-3 overflow-y-auto">
             {/* 月次集計 */}
             {summary && <div className="bg-white rounded-lg border border-gray-200 p-4">
               <h3 className="text-sm font-semibold text-gray-700 mb-3">
