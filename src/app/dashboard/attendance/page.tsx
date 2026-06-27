@@ -61,6 +61,7 @@ export default function AttendancePage() {
     }
   }, [selectedId, yearMonth]);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- API取得結果でstateを更新する通常のデータ読み込み
   useEffect(() => { loadRecords(); }, [loadRecords]);
 
 

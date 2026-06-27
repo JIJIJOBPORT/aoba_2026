@@ -26,6 +26,7 @@ export default function PayrollListPage() {
 
   useEffect(() => {
     if (!selectedEmployee) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- 社員選択時のローディング表示
     setLoading(true);
     fetch(`/api/payroll?employeeId=${selectedEmployee.id}`)
       .then((r) => r.json())
