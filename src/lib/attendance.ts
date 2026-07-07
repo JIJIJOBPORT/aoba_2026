@@ -1,5 +1,6 @@
 import { getSheetRows, getSheetData, SHEETS, parseNumber } from './sheets';
 import { getSheetsClient } from './google-auth';
+import { normalizeMonth } from './utils';
 
 const SPREADSHEET_ID = process.env.GOOGLE_SPREADSHEET_ID!;
 
@@ -62,7 +63,8 @@ export async function getAttendanceRecords(
 ): Promise<AttendanceRecord[]> {
   const rows = await getSheetRows('勤怠記録');
   return rows
-    .filter((r) => r[0] === employeeId && normalizeDate(r[1]).startsWith(yearMonth))
+    // 日付は "2026/5/1" と "2026/05/01" が混在しうるため、YYYY-MM に正規化して比較する
+    .filter((r) => r[0] === employeeId && normalizeMonth(r[1]) === normalizeMonth(yearMonth))
     .map((r) => ({
       employeeId: r[0] ?? '',
       date: r[1] ?? '',

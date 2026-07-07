@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Employee, PayrollRecord } from '@/types';
-import { X, Pencil, Check, Trash2 } from 'lucide-react';
+import { X, Pencil, Check, Trash2, RotateCcw } from 'lucide-react';
 import PayrollDetail from '@/components/payroll/PayrollDetail';
 import { formatMonth } from '@/lib/utils';
 
@@ -18,6 +18,8 @@ export default function PayrollListPage() {
   const [attForm, setAttForm] = useState({ workDays: 0, paidLeaveDays: 0, absentDays: 0, workHours: 0, overtimeHours: 0, note: '' });
   const [attSaving, setAttSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [syncing, setSyncing] = useState(false);
+  const [syncMsg, setSyncMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   useEffect(() => {
     fetch('/api/employees')
@@ -25,15 +27,42 @@ export default function PayrollListPage() {
       .then((d) => d.success && setEmployees(d.data));
   }, []);
 
-  useEffect(() => {
+  const loadPayrolls = useCallback(async () => {
     if (!selectedEmployee) return;
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- 社員選択時のローディング表示
     setLoading(true);
-    fetch(`/api/payroll?employeeId=${selectedEmployee.id}`)
-      .then((r) => r.json())
-      .then((d) => d.success && setPayrolls(d.data))
-      .finally(() => setLoading(false));
+    try {
+      const res = await fetch(`/api/payroll?employeeId=${selectedEmployee.id}`);
+      const d = await res.json();
+      if (d.success) setPayrolls(d.data);
+    } finally {
+      setLoading(false);
+    }
   }, [selectedEmployee]);
+
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- 社員選択時のデータ読み込み
+  useEffect(() => { loadPayrolls(); }, [loadPayrolls]);
+
+  const handleSyncAttendance = async () => {
+    if (!selectedEmployee) return;
+    setSyncing(true);
+    setSyncMsg(null);
+    try {
+      const res = await fetch('/api/payroll/sync-attendance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ employeeId: selectedEmployee.id }),
+      });
+      const d = await res.json();
+      if (d.success) {
+        setSyncMsg({ type: 'success', text: d.message });
+        await loadPayrolls();
+      } else {
+        setSyncMsg({ type: 'error', text: d.error });
+      }
+    } finally {
+      setSyncing(false);
+    }
+  };
 
   const handleDelete = async (rec: typeof payrolls[number]) => {
     if (!confirm(`${formatMonth(rec.paymentMonth)} の給与データを削除しますか？\nこの操作は取り消せません。`)) return;
@@ -112,6 +141,22 @@ export default function PayrollListPage() {
           >
             絞り込みを解除
           </button>
+        )}
+        {selectedEmployee && (
+          <button
+            onClick={handleSyncAttendance}
+            disabled={syncing}
+            className="ml-auto flex items-center gap-1.5 px-4 py-2 bg-orange-500 text-white text-sm rounded-lg hover:bg-orange-600 disabled:opacity-50 transition-colors"
+            title="各給与データの支給月に対応する勤怠記録を集計し、勤怠項目に反映します"
+          >
+            <RotateCcw size={14} className={syncing ? 'animate-spin' : ''} />
+            {syncing ? '反映中...' : '勤怠を反映'}
+          </button>
+        )}
+        {syncMsg && (
+          <span className={`text-sm px-3 py-2 rounded-lg ${syncMsg.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+            {syncMsg.text}
+          </span>
         )}
       </div>
 
