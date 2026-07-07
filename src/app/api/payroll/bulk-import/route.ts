@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getSheetsClient } from '@/lib/google-auth';
+import { normalizeMonth } from '@/lib/utils';
 
 const SPREADSHEET_ID = process.env.GOOGLE_SPREADSHEET_ID!;
 const SHEET = '給与・賞与明細履歴';
@@ -28,7 +29,8 @@ export async function POST(request: Request) {
       const lineNum = i + 2; // CSVの行番号（1行目はヘッダー）
 
       const employeeId = String(row['社員ID'] ?? '').trim();
-      const paymentMonth = String(row['勤務月'] ?? '').trim();
+      // Excelが "2026-04" を "Apr-26" 等に変換していても正準形 "YYYY-MM" へ揃える
+      const paymentMonth = normalizeMonth(String(row['勤務月'] ?? '').trim());
 
       if (!employeeId || !paymentMonth) {
         errors.push(`行${lineNum}: 社員IDまたは勤務月が空です`);

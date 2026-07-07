@@ -1,11 +1,12 @@
 import { getSheetRows, SHEETS, parseNumber } from './sheets';
+import { normalizeMonth } from './utils';
 import { PayrollRecord } from '@/types';
 
 function rowToRecord(row: string[]): PayrollRecord {
   return {
     id: row[0] ?? '',
     employeeId: row[1] ?? '',
-    paymentMonth: row[2] ?? '',
+    paymentMonth: normalizeMonth(row[2] ?? ''),
     paymentDate: row[3] ?? '',
     recordType: (row[4] as PayrollRecord['recordType']) ?? '給与',
     workDays: parseNumber(row[5]),

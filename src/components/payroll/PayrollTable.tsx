@@ -1,7 +1,7 @@
 'use client';
 
 import { PayrollRecord } from '@/types';
-import { formatCurrency } from '@/lib/utils';
+import { formatMonth } from '@/lib/utils';
 import { cn } from '@/lib/utils';
 
 interface Props {
@@ -51,7 +51,7 @@ export default function PayrollTable({ records, selectedId, onSelect, onAddClick
                   )}
                 >
                   <td className="py-2.5 pr-4 font-medium text-gray-700">
-                    {rec.paymentMonth}
+                    {formatMonth(rec.paymentMonth)}
                     {rec.recordType === '賞与' && (
                       <span className="ml-1 text-xs bg-yellow-100 text-yellow-700 px-1.5 py-0.5 rounded">
                         賞与

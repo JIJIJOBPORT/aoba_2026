@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Employee, PayrollRecord } from '@/types';
 import { X, Pencil, Check, Trash2 } from 'lucide-react';
 import PayrollDetail from '@/components/payroll/PayrollDetail';
+import { formatMonth } from '@/lib/utils';
 
 export default function PayrollListPage() {
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -35,7 +36,7 @@ export default function PayrollListPage() {
   }, [selectedEmployee]);
 
   const handleDelete = async (rec: typeof payrolls[number]) => {
-    if (!confirm(`${rec.paymentMonth} の給与データを削除しますか？\nこの操作は取り消せません。`)) return;
+    if (!confirm(`${formatMonth(rec.paymentMonth)} の給与データを削除しますか？\nこの操作は取り消せません。`)) return;
     setDeletingId(rec.id);
     try {
       const res = await fetch('/api/payroll/delete', {
@@ -139,7 +140,7 @@ export default function PayrollListPage() {
             <tbody>
               {filtered.map((rec) => (
                 <tr key={rec.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                  <td className="px-4 py-3 font-medium text-gray-700">{rec.paymentMonth}</td>
+                  <td className="px-4 py-3 font-medium text-gray-700">{formatMonth(rec.paymentMonth)}</td>
                   <td className="px-3 py-3 text-center">
                     <span className={`text-xs px-2 py-0.5 rounded-full ${rec.recordType === '賞与' ? 'bg-yellow-100 text-yellow-700' : 'bg-[#e8f0ef] text-[#34675C]'}`}>
                       {rec.recordType}
@@ -200,7 +201,7 @@ export default function PayrollListPage() {
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200">
               <h2 className="text-base font-semibold text-gray-800">
-                {selectedEmployee.name}｜{modalRecord.paymentMonth} 給与明細
+                {selectedEmployee.name}｜{formatMonth(modalRecord.paymentMonth)} 給与明細
               </h2>
               <button
                 onClick={() => setModalRecord(null)}

@@ -6,6 +6,7 @@ import { Employee, PayrollRecord } from '@/types';
 import { Pencil, Mail, Phone, Building2, Calendar, X } from 'lucide-react';
 import PayrollTable from '@/components/payroll/PayrollTable';
 import PayrollDetail from '@/components/payroll/PayrollDetail';
+import { formatMonth } from '@/lib/utils';
 
 interface Props {
   employee: Employee;
@@ -131,7 +132,7 @@ export default function EmployeeDetail({ employee }: Props) {
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200">
               <h2 className="text-base font-semibold text-gray-800">
-                {employee.name}｜{selectedPayroll.paymentMonth} 給与明細
+                {employee.name}｜{formatMonth(selectedPayroll.paymentMonth)} 給与明細
               </h2>
               <button
                 onClick={() => setSelectedPayroll(null)}
