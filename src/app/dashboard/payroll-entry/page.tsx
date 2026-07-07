@@ -254,7 +254,9 @@ function PayrollEntryInner() {
   const handleDownloadTemplate = () => {
     const header = '社員ID,勤務月,支払日,区分,基本給,役職手当,家族手当,住宅手当,その他手当,時間外手当,交通費,健康保険,厚生年金,雇用保険,介護保険,子育て支援金,所得税,住民税,備考';
     const sample = 'nagai,2026-04,2026-05-25,給与,300000,0,0,0,0,0,0,15180,27450,1499,2430,345,4590,4900,';
-    const blob = new Blob([header + '\n' + sample], { type: 'text/csv;charset=utf-8;' });
+    // Excelで開いた際の文字化け防止のためUTF-8 BOMを先頭に付与
+    const bom = '\uFEFF';
+    const blob = new Blob([bom + header + '\n' + sample], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
