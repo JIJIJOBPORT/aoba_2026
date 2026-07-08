@@ -213,3 +213,50 @@ export function summarizeAttendance(records: AttendanceRecord[]): MonthlySummary
 function normalizeDate(dateStr: string): string {
   return dateStr.replace(/\//g, '-');
 }
+
+// 有給取得記録を勤怠カレンダーに反映する（有給→勤怠）。
+// generateMissing=true の場合、勤怠カレンダー未生成の月は自動生成する。
+export async function reflectPaidLeaveToAttendance(
+  employeeId: string,
+  opts: { generateMissing?: boolean } = {}
+): Promise<{ synced: number; generated: number; errors: string[] }> {
+  const { generateMissing = true } = opts;
+  const { getPaidLeaveUsageByEmployee } = await import('./paid-leave');
+
+  const usages = await getPaidLeaveUsageByEmployee(employeeId);
+  let synced = 0;
+  let generated = 0;
+  const errors: string[] = [];
+  if (usages.length === 0) return { synced, generated, errors };
+
+  const yearMonths = [...new Set(usages.map((u) => normalizeMonth(u.usedDate)))];
+
+  for (const yearMonth of yearMonths) {
+    const existing = await getAttendanceRecords(employeeId, yearMonth);
+    if (existing.length === 0) {
+      if (!generateMissing) continue; // 未生成の月はスキップ
+      await generateMonthlyAttendance(employeeId, yearMonth);
+      generated++;
+    }
+
+    const monthUsages = usages.filter((u) => normalizeMonth(u.usedDate) === yearMonth);
+    for (const usage of monthUsages) {
+      try {
+        const category =
+          usage.usageType === '半日午前' ? '半休午前' as const :
+          usage.usageType === '半日午後' ? '半休午後' as const : '有給' as const;
+        await updateAttendanceCategory(
+          employeeId,
+          usage.usedDate,
+          category,
+          `有給取得（${usage.usageType}）${usage.note ? ' ' + usage.note : ''}`
+        );
+        synced++;
+      } catch (e) {
+        errors.push(`${usage.usedDate}: ${String(e)}`);
+      }
+    }
+  }
+
+  return { synced, generated, errors };
+}

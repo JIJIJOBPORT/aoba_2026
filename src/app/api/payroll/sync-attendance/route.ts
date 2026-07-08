@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getSheetsClient } from '@/lib/google-auth';
 import { getSheetData, SHEETS } from '@/lib/sheets';
-import { AttendanceRecord, summarizeAttendance } from '@/lib/attendance';
+import { AttendanceRecord, summarizeAttendance, reflectPaidLeaveToAttendance } from '@/lib/attendance';
 import { normalizeMonth } from '@/lib/utils';
 
 const SPREADSHEET_ID = process.env.GOOGLE_SPREADSHEET_ID!;
@@ -14,6 +14,9 @@ export async function POST(request: Request) {
     if (!employeeId) {
       return NextResponse.json({ success: false, error: 'employeeIdが必要です' }, { status: 400 });
     }
+
+    // 先に有給取得記録を勤怠カレンダーへ反映してから集計する（未生成の月は生成しない）
+    const leave = await reflectPaidLeaveToAttendance(employeeId, { generateMissing: false });
 
     const [payrollData, attData] = await Promise.all([
       getSheetData(SHEETS.PAYROLL),
@@ -78,8 +81,10 @@ export async function POST(request: Request) {
     return NextResponse.json({
       success: true,
       updated: updates.length,
+      leaveSynced: leave.synced,
       message:
         `${updates.length}件の給与データに勤怠を反映しました` +
+        (leave.synced > 0 ? `（有給${leave.synced}件を反映）` : '') +
         (missing.length > 0 ? `（勤怠記録なし: ${missing.join(', ')}）` : ''),
       details,
     });
